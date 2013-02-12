@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta charset="UTF-8"> 
+	<style type="text/css">
+
+		/* INFO Some other CSS for the look */
+		
+		body {
+			background: #999;
+			margin: 0em;
+		}
+
+		pre {
+			margin: 1em;
+		}
+
+		h1 {
+			font-size: 2em;
+			margin: 0.5em;
+		}
+
+		div, p {
+			margin: 1em;
+			overflow: hidden;
+		}
+
+		#Resolve {
+			background: #fdd;
+		}
+		#JavaScript {
+			background: #dfd;
+		}
+		#JSON {
+			background: #ddf;
+		}
+		#Cache {
+			background: #ffd;
+		}
+
+
+
+	</style>
+	<script type="text/javascript" src="../require.min.js"></script>
+	<title>Pixels vs. Bytes | Example: Node.js require() for your browser</title>
+</head>
+
+<body class="Grid">
+	<div id="Resolve">
+		<h1>URL resolvings</h1>
+		<pre><script type="text/javascript">
+		var mname = '/module.js';
+		document.writeln('require.resolve('+mname+') -> '+require.resolve(mname));
+		mname = './module.js';
+		document.writeln('require.resolve('+mname+') -> '+require.resolve(mname)); 
+		mname = '../module.js';
+		document.writeln('require.resolve('+mname+') -> '+require.resolve(mname));
+		mname = 'module.js';
+		document.writeln('require.resolve('+mname+') -> '+require.resolve(mname)); 
+		mname = './module.json';
+		document.writeln('require.resolve('+mname+') -> '+require.resolve(mname));
+		mname = './module';
+		document.write('require.resolve('+mname+') -> '+require.resolve(mname));
+		</script></pre>
+	</div>
+	<div id="JavaScript">
+		<h1>JavaScript module (asynchronous)</h1>
+		<pre id="cbPre"><script type="text/javascript">
+		require('./module.js', function(mod) {
+			var node = document.getElementById('cbPre');
+			node.innerHTML += mod.greet()+'\n';
+			mod.worldstr = 'module';
+			node.innerHTML += mod.greet()+'\n';
+		});
+		</script></pre>
+	</div>
+	<div id="JavaScript">
+		<h1>JavaScript module (synchronous)</h1>
+		<pre><script type="text/javascript">
+		var mod = require('./module.js');
+		document.writeln(mod.greet());
+		mod.worldstr = 'module';
+		document.write(mod.greet());
+		</script></pre>
+	</div>
+	<div id="JSON">
+		<h1>JSON module (synchronous)</h1>
+		<pre><script type="text/javascript">
+		var json = require('./module.json');
+		document.writeln(json.greetstr);
+		</script></pre>
+	</div>
+	<div id="Cache">
+		<h1>Cached modules</h1>
+		<pre><script type="text/javascript">
+		for (x in require.cache)
+			document.writeln('require.cache[\''+x+'\']');
+		</script></pre>
+	</div>
+</body>
+
+</html>
+
