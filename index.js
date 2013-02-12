@@ -1,32 +1,10 @@
-// ==Closure.compiler==
-// @compilation_level SIMPLE_OPTIMIZATIONS
-// ==/Closure.compiler==
-
-// Require() 0.3.4.1 unstable
-//
-// Copyright 2012 Torben Schulz <http://pixelsvsbytes.com/>
-// 
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
-// 
-///////////////////////////////////////////////////////////////////////
-
 (function() {
-// NOTE If we would use strict mode for this closure we won't allow the modules
+// NOTE If we would use strict mode for this closure we won't allow the paths
 //      to be executed in normal mode.
 
-function require(module, callback) {
-	var url = require.resolve(module);
+function require(path, callback) {
+	var rpath = require.resolve(path);
+	var url = rpath.prefixed?rpath.url:'/js_modules/'+rpath.url; 
 
 	if (require.cache[url]) {
 		// NOTE The callback should always be called asynchronously
@@ -63,12 +41,16 @@ function require(module, callback) {
 	return exports;
 }
 
-require.resolve = function(module) {
-	var r = module.match(/^(\.{0,2}\/)?([^\.]*)(\..*)?$/);
-	return (r[1]?r[1]:'/js_modules/')+r[2]+(r[3]?r[3]:(r[2].match(/\/$/)?'index.js':'.js'));
+require.resolve = function(path) {
+	var m = path.match(/^((?:\.{0,2}\/)?)((?:.*?\/)*)([^@].*?)?(\..*?)?(?:@(.*?))?$/);
+	return {
+		'url': m[1]+m[2]+(m[3]?m[3]+(m[4]?m[4]:'.js'):'index.js'),
+		'module': m[5],
+		'prefixed': !!m[1]
+	};
 }
 
-// INFO initializing module cache
+// INFO initializing cache
 require.cache = new Object();
 
 if (window.require !== undefined)

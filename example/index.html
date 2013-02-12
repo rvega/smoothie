@@ -43,7 +43,7 @@
 
 
 	</style>
-	<script type="text/javascript" src="../require.min.js"></script>
+	<script type="text/javascript" src="../index.js"></script>
 	<title>Pixels vs. Bytes | Example: Node.js require() for your browser</title>
 </head>
 
@@ -52,17 +52,30 @@
 		<h1>URL resolvings</h1>
 		<pre><script type="text/javascript">
 		var mname = '/module.js';
-		document.writeln('require.resolve('+mname+') -> '+require.resolve(mname));
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		mname = './module.js';
-		document.writeln('require.resolve('+mname+') -> '+require.resolve(mname)); 
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname))); 
 		mname = '../module.js';
-		document.writeln('require.resolve('+mname+') -> '+require.resolve(mname));
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		mname = 'module.js';
-		document.writeln('require.resolve('+mname+') -> '+require.resolve(mname)); 
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname))); 
 		mname = './module.json';
-		document.writeln('require.resolve('+mname+') -> '+require.resolve(mname));
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		mname = './module';
-		document.write('require.resolve('+mname+') -> '+require.resolve(mname));
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+
+		mname = './module@foo';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+		mname = './module.js@foo';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+		mname = './bar/baz/module.js@foo';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+		mname = 'module@foo';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+		mname = 'module.js@foo';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+		mname = 'bar/baz/module@foo';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		</script></pre>
 	</div>
 	<div id="JavaScript">
