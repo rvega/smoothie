@@ -1,4 +1,4 @@
-exports.hello = function(exports) {
+exports.hello = function() {
 	'use strict';
 
 	exports.hellostr = 'hello';
@@ -8,7 +8,7 @@ exports.hello = function(exports) {
 	}
 }
 
-exports.world = function(exports) {
+exports.world = function() {
 	'use strict';
 
 	exports.worldstr = 'world';
