@@ -27,16 +27,16 @@
 			overflow: hidden;
 		}
 
-		#Resolve {
+		.Resolve {
 			background: #fdd;
 		}
-		#JavaScript {
+		.Module {
 			background: #dfd;
 		}
-		#JSON {
+		.Bundle {
 			background: #ddf;
 		}
-		#Cache {
+		.Cache {
 			background: #ffd;
 		}
 
@@ -48,7 +48,7 @@
 </head>
 
 <body class="Grid">
-	<div id="Resolve">
+	<div class="Resolve">
 		<h1>URL resolvings</h1>
 		<pre><script type="text/javascript">
 		var mname = '/module.js';
@@ -64,23 +64,23 @@
 		mname = './module';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 
-		mname = './module/./foo';
+		mname = './module//foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = './module.js/./foo';
+		mname = './module.js//foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = './bar/baz/module.js/./foo';
+		mname = './bar/baz/module.js//foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = 'module/./foo';
+		mname = 'module//foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = 'module.js/./foo';
+		mname = 'module.js//foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = 'bar/baz/module/./foo';
+		mname = 'bar/baz/.//foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = './/.//./foo';
+		mname = './/.//bar//foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		</script></pre>
 	</div>
-	<div id="JavaScript">
+	<div class="Module">
 		<h1>JavaScript module (asynchronous)</h1>
 		<pre id="asyncModulePre"><script type="text/javascript">
 		require('./module.js', function(mod) {
@@ -89,20 +89,20 @@
 		});
 		</script></pre>
 	</div>
-	<div id="JavaScript">
-		<h1>JavaScript module (asynchronous)</h1>
+	<div class="Bundle">
+		<h1>JavaScript bundle (asynchronous)</h1>
 		<pre id="asyncBundlePre"><script type="text/javascript">
-		require('./bundle.js/./hello', function(mod) {
+		require('./bundle.js//hello', function(mod) {
 			var node = document.getElementById('asyncBundlePre');
 			node.innerHTML += mod.greet()+'\n';
 		});
-		require('./bundle.js/./world', function(mod) {
+		require('./bundle.js//world', function(mod) {
 			var node = document.getElementById('asyncBundlePre');
 			node.innerHTML += mod.greet()+'\n';
 		});
 		</script></pre>
 	</div>
-	<div id="JavaScript">
+	<div class="Module">
 		<h1>JavaScript module (synchronous)</h1>
 		<pre><script type="text/javascript">
 		var mod = require('./module.js');
@@ -111,27 +111,20 @@
 		document.write(mod.greet());
 		</script></pre>
 	</div>
-	<div id="JavaScript">
+	<div class="Bundle">
 		<h1>JavaScript bundle (synchronous)</h1>
 		<pre><script type="text/javascript">
-		var hello = require('./bundle.js/./hello');
+		var hello = require('./bundle.js//hello');
 		document.writeln(hello.greet());
 		hello.hellostr = 'hej';
 		document.writeln(hello.greet());
-		var world = require('./bundle.js/./world');
+		var world = require('./bundle.js//world');
 		document.writeln(world.greet());
 		world.worldstr = 'verden';
 		document.writeln(world.greet());
 		</script></pre>
 	</div>
-	<div id="JSON">
-		<h1>JSON module (synchronous)</h1>
-		<pre><script type="text/javascript">
-		var json = require('./module.json');
-		document.writeln(json.greetstr);
-		</script></pre>
-	</div>
-	<div id="Cache">
+	<div class="Cache">
 		<h1>Cached modules</h1>
 		<pre><script type="text/javascript">
 		for (x in require.cache)

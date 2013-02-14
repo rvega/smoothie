@@ -4,7 +4,7 @@ exports.hello = function() {
 	exports.hellostr = 'hello';
 
 	exports.greet = function() {
-		return exports.hellostr+' WORLD';
+		return exports.hellostr+' WORLD from '+module.id+'!';
 	}
 }
 
@@ -14,6 +14,6 @@ exports.world = function() {
 	exports.worldstr = 'world';
 
 	exports.greet = function() {
-		return 'HELLO '+exports.worldstr+'!';
+		return 'HELLO '+exports.worldstr+' from '+module.id+'!';
 	}
 }

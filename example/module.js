@@ -5,5 +5,5 @@ var hellostr = 'hello';
 exports.worldstr = 'world';
 
 exports.greet = function() {
-	return hellostr+' '+exports.worldstr+'!';
+	return hellostr+' '+exports.worldstr+' from '+module.id+'!';
 }
