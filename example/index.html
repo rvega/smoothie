@@ -64,27 +64,40 @@
 		mname = './module';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 
-		mname = './module@foo';
+		mname = './module/./foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = './module.js@foo';
+		mname = './module.js/./foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = './bar/baz/module.js@foo';
+		mname = './bar/baz/module.js/./foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = 'module@foo';
+		mname = 'module/./foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = 'module.js@foo';
+		mname = 'module.js/./foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = 'bar/baz/module@foo';
+		mname = 'bar/baz/module/./foo';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+		mname = './/.//./foo';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		</script></pre>
 	</div>
 	<div id="JavaScript">
 		<h1>JavaScript module (asynchronous)</h1>
-		<pre id="cbPre"><script type="text/javascript">
+		<pre id="asyncModulePre"><script type="text/javascript">
 		require('./module.js', function(mod) {
-			var node = document.getElementById('cbPre');
+			var node = document.getElementById('asyncModulePre');
 			node.innerHTML += mod.greet()+'\n';
-			mod.worldstr = 'module';
+		});
+		</script></pre>
+	</div>
+	<div id="JavaScript">
+		<h1>JavaScript module (asynchronous)</h1>
+		<pre id="asyncBundlePre"><script type="text/javascript">
+		require('./bundle.js/./hello', function(mod) {
+			var node = document.getElementById('asyncBundlePre');
+			node.innerHTML += mod.greet()+'\n';
+		});
+		require('./bundle.js/./world', function(mod) {
+			var node = document.getElementById('asyncBundlePre');
 			node.innerHTML += mod.greet()+'\n';
 		});
 		</script></pre>
@@ -96,6 +109,19 @@
 		document.writeln(mod.greet());
 		mod.worldstr = 'module';
 		document.write(mod.greet());
+		</script></pre>
+	</div>
+	<div id="JavaScript">
+		<h1>JavaScript bundle (synchronous)</h1>
+		<pre><script type="text/javascript">
+		var hello = require('./bundle.js/./hello');
+		document.writeln(hello.greet());
+		hello.hellostr = 'hej';
+		document.writeln(hello.greet());
+		var world = require('./bundle.js/./world');
+		document.writeln(world.greet());
+		world.worldstr = 'verden';
+		document.writeln(world.greet());
 		</script></pre>
 	</div>
 	<div id="JSON">

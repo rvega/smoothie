@@ -4,49 +4,64 @@
 
 function require(path, callback) {
 	var rpath = require.resolve(path);
-	var url = rpath.prefixed?rpath.url:'/js_modules/'+rpath.url; 
+	var url = rpath.prefixed?rpath.href:'/js_modules/'+rpath.href; 
 
-	if (require.cache[url]) {
+	if (require.cache[url] && require.cache[url][0]) {
+		if (!require.cache[url][rpath.module]) {
+			require.cache[url][rpath.module] = new Object();
+			require.cache[url][0][rpath.module](require.cache[url][rpath.module]);
+		}
 		// NOTE The callback should always be called asynchronously
-		callback && setTimeout(function(){callback(require.cache[url])}, 0);
-		return require.cache[url];
+		callback && setTimeout(function(){callback(require.cache[url][rpath.module])}, 0);
+		return require.cache[url][rpath.module];
 	}
+	require.cache[url] = new Object();
 	
-	var exports = new Object();
+	var hook = new Object();
 	var request = new XMLHttpRequest();
+
 	request.onreadystatechange = function() {
 		if (this.readyState != 4)
 			return;
 		if (this.status != 200)
 			throw 'Require() exception: GET '+url+' '+this.status+' ('+this.statusText+')';
 
-
-		if (require.cache[url]) {
-			exports = require.cache[url];
-		}
-		else if (this.getResponseHeader('content-type').indexOf('application/json') != -1) { 
-			exports = JSON.parse(this.responseText);
-			require.cache[url] = exports;
+		if (this.getResponseHeader('content-type').indexOf('application/json') != -1) {
+			require.cache[url][rpath.module] = JSON.parse(this.responseText);
+			hook = require.cache[url][rpath.module];
 		}
 		else {
-			require.cache[url] = exports;
-			var source = this.responseText.match(/^\s*(?:(['"]use strict['"])(?:;\r?\n?|\r?\n))?\s*((?:.*\r?\n?)*)/);
-			eval('(function(){'+source[1]+';var exports=require.cache[\''+url+'\'];\n\n'+source[2]+'\n})();\n//@ sourceURL='+url+'\n');
+			// TODO Build module object
+
+			if (!require.cache[url][0]) {
+				require.cache[url][0] = new Object();
+				var source = this.responseText.match(/^\s*(?:(['"]use strict['"])(?:;\r?\n?|\r?\n))?\s*((?:.*\r?\n?)*)/);
+				eval('(function(){'+source[1]+';var exports=require.cache[\''+url+'\'][0];\n\n'+source[2]+'\n})();\n//@ sourceURL='+url+'\n');
+			}
+			if (!require.cache[url][rpath.module]) {
+				require.cache[url][rpath.module] = hook;
+				require.cache[url][0][rpath.module](require.cache[url][rpath.module]);
+			}
+			else {
+				hook = require.cache[url][rpath.module];
+			}
 		}
 
-		callback && callback(require.cache[url]);
+		callback && callback(hook);
 	};
+
 	request.open('GET', url, !!callback);
 	request.send();
-	return exports;
+	return hook;
 }
 
 require.resolve = function(path) {
-	var m = path.match(/^((?:\.{0,2}\/)?)((?:.*?\/)*)([^@].*?)?(\..*?)?(?:@(.*?))?$/);
+	// TODO handle relative paths
+	var m = path.match(/^((?:\.{0,2}\/)?)((?:.+?\/)*?)(?:([^\/]+?)(\.[^\/]+)?)?(?:\/\.\/([^\/]+))?$/);
 	return {
-		'url': m[1]+m[2]+(m[3]?m[3]+(m[4]?m[4]:'.js'):'index.js'),
-		'module': m[5],
-		'prefixed': !!m[1]
+	 	'href': m[1]+m[2]+(m[3]?m[3]+(m[4]?m[4]:'.js'):'index.js'),
+	 	'module': m[5]?m[5]:0,
+	 	'prefixed': !!m[1]
 	};
 }
 
