@@ -6,7 +6,7 @@ var urlCleaner = document.createElement('A');
 
 function require(path, callback) {
 	var bInfo = require.resolve(path);
-	var mInfo = bInfo.sub?{'id':bInfo.id+'//'+bInfo.sub,'uri': bInfo.uri+'#'+bInfo.sub}:bInfo;
+	var mInfo = bInfo.sub?{'id':bInfo.id+'/'+bInfo.sub,'uri': bInfo.uri+'#'+bInfo.sub}:bInfo;
 
 	// TODO set relative paths
 
@@ -50,7 +50,7 @@ function require(path, callback) {
 
 require.resolve = function(path) {
 	var m = path.match(/^(\.{0,2}\/)?((?:[^\/]+\/+)*?)([^\/\.]+)?(\.[^\/]*)?(?:\/\/([^\/]+))?$/);
-	urlCleaner.href = (m[1]?require.pwd[0]+m[1]:'/jsModules/')+m[2];
+	urlCleaner.href = (m[1]?(m[1]!='/'?require.pwd[0]:'')+m[1]:'/jsModules/')+m[2];
 	
 	return {
 		'id': urlCleaner.pathname.replace(/\/\/+/g, '/')+(m[3]?m[3]:'index'),

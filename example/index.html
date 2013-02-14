@@ -89,6 +89,15 @@
 		});
 		</script></pre>
 	</div>
+	<div class="Module">
+		<h1>JavaScript module (synchronous)</h1>
+		<pre><script type="text/javascript">
+		var mod = require('./module.js');
+		document.writeln(mod.greet());
+		mod.worldstr = 'module';
+		document.write(mod.greet());
+		</script></pre>
+	</div>
 	<div class="Bundle">
 		<h1>JavaScript bundle (asynchronous)</h1>
 		<pre id="asyncBundlePre"><script type="text/javascript">
@@ -102,15 +111,6 @@
 		});
 		</script></pre>
 	</div>
-	<div class="Module">
-		<h1>JavaScript module (synchronous)</h1>
-		<pre><script type="text/javascript">
-		var mod = require('./module.js');
-		document.writeln(mod.greet());
-		mod.worldstr = 'module';
-		document.write(mod.greet());
-		</script></pre>
-	</div>
 	<div class="Bundle">
 		<h1>JavaScript bundle (synchronous)</h1>
 		<pre><script type="text/javascript">
@@ -121,6 +121,15 @@
 		var world = require('./bundle.js//world');
 		document.writeln(world.greet());
 		world.worldstr = 'verden';
+		document.writeln(world.greet());
+		</script></pre>
+	</div>
+	<div class="Bundle">
+		<h1>JavaScript bundle (cached via id)</h1>
+		<pre><script type="text/javascript">
+		var hello = require('/PixelsVsBytes/Repositories/Jay/git/example/bundle/hello');
+		document.writeln(hello.greet());
+		var world = require('/PixelsVsBytes/Repositories/Jay/git/example/bundle/world');
 		document.writeln(world.greet());
 		</script></pre>
 	</div>
