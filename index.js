@@ -1,48 +1,53 @@
-(function() {
-// NOTE If we would use strict mode for this closure we won't allow the paths
-//      to be executed in normal mode.
+// NOTE The load parameter points to the function, which prepares the
+//      environment for each module and runs its code. Scroll down to the end of
+//      the file to see the function definition.
+(function(load) { 'use strict';
 
-var urlCleaner = document.createElement('A');
+// INFO Used to parse and cleanup module paths
+var anchor = document.createElement('A');
+// INFO Module cache
+var cache = new Object();
+// INFO Paths for relative modules (0 = current)
+var pwd = Array(location.pathname.replace(/\/\/+/g, '/'));
 
-function load(source, exports, module) {
-	require.pwd.unshift(module.id.match(/^.*\//)[0]);
-	eval('('+source+')();\n//@ sourceURL='+module.uri+'\n');
-	require.pwd.shift();
+function resolve(path) {
+	var m = path.match(/^(?:(\.{0,2})\/)?((?:[^\/]+\/+)*?)([^\/\.]+)?(\.[^\/]*)?(?:\/\/([^\/]+))?$/);
+	anchor.href = (m[1]?pwd[0]+m[1]:'')+'/'+m[2];
+	
+	return {
+		'id': anchor.pathname.replace(/\/\/+/g, '/')+(m[3]?m[3]:'index'),
+	 	'uri': anchor.href+(m[3]?m[3]+(m[4]?m[4]:'.js'):'index.js'),
+		'sub': m[5]
+	};
 }
 
 function require(path, callback) {
-	var bInfo = require.resolve(path);
+	var bInfo = resolve(path);
 	var mInfo = bInfo.sub?{'id':bInfo.id+'/'+bInfo.sub,'uri': bInfo.uri+'#'+bInfo.sub}:bInfo;
 
-	if (require.cache[bInfo.id]) {
-		if (!require.cache[mInfo.id]) {
-			require.cache[mInfo.id] = new Object();
-			load(require.cache[bInfo.id][bInfo.sub], require.cache[mInfo.id], mInfo);
-		}
+	if (cache[bInfo.id]) {
+		if (!cache[mInfo.id]) 
+			load(mInfo, cache, pwd, cache[bInfo.id][bInfo.sub]);
 		// NOTE The callback should always be called asynchronously to ensure
 		//      that a cached call won't differ from an uncached one.
-		callback && setTimeout(function(){callback(require.cache[mInfo.id])}, 0);
-		return require.cache[mInfo.id];
+		callback && setTimeout(function(){callback(cache[mInfo.id])}, 0);
+		return cache[mInfo.id];
 	}
 	
 	var hook = null;
 	var request = new XMLHttpRequest();
 
 	request.onreadystatechange = function() {
-		if (this.readyState != 4)
+		if (request.readyState != 4)
 			return;
-		if (this.status != 200)
-			throw 'Require() exception: GET '+bInfo.uri+' '+this.status+' ('+this.statusText+')';
+		if (request.status != 200)
+			throw 'Require() exception: GET '+bInfo.uri+' '+request.status+' ('+request.statusText+')';
 
-		if (!require.cache[bInfo.id]) {
-			require.cache[bInfo.id] = new Object();
-			load('function(){\n'+this.responseText+'\n}', require.cache[bInfo.id], bInfo);
-		}
-		if (!require.cache[mInfo.id]) {
-			require.cache[mInfo.id] = new Object();
-			load(require.cache[bInfo.id][bInfo.sub], require.cache[mInfo.id], mInfo);
-		}
-		hook = require.cache[mInfo.id];
+		if (!cache[bInfo.id]) 
+			load(bInfo, cache, pwd, 'function(){\n'+request.responseText+'\n}');
+		if (!cache[mInfo.id]) 
+			load(mInfo, cache, pwd, cache[bInfo.id][bInfo.sub]);
+		hook = cache[mInfo.id];
 
 		callback && callback(hook);
 	};
@@ -52,24 +57,21 @@ function require(path, callback) {
 	return hook;
 }
 
-require.resolve = function(path) {
-	var m = path.match(/^(?:(\.{0,2})\/)?((?:[^\/]+\/+)*?)([^\/\.]+)?(\.[^\/]*)?(?:\/\/([^\/]+))?$/);
-	urlCleaner.href = (m[1]?require.pwd[0]+m[1]:'')+'/'+m[2];
-	
-	return {
-		'id': urlCleaner.pathname.replace(/\/\/+/g, '/')+(m[3]?m[3]:'index'),
-	 	'uri': urlCleaner.href+(m[3]?m[3]+(m[4]?m[4]:'.js'):'index.js'),
-		'sub': m[5]
-	};
-}
-
-// INFO Module cache
-require.cache = new Object();
-// INFO Relative module paths (0 = current)
-require.pwd = Array(location.pathname.replace(/\/\/+/g, '/'));
-
 if (window.require !== undefined)
 	throw 'RequireException: \'require\' already defined in global scope';
-window.require = require;
 
-})();
+if (Object.defineProperty) {
+	Object.defineProperty(require, 'resolve', {'value':resolve,'writable':false,'configurable':false});
+	Object.defineProperty(window, 'require', {'value':require,'writable':false,'configurable':false});
+}
+else {
+	require.resolve = resolve;
+	window.require = require;
+}
+
+})(function(module/*, cache, pwd, source*/) {
+	var exports = arguments[1][module.id] = new Object();
+	arguments[2].unshift(module.id.match(/^.*\//)[0]);
+	eval('('+arguments[3]+')();\n//@ sourceURL='+module.uri+'\n');
+	arguments[2].shift();
+});
