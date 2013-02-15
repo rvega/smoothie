@@ -98,6 +98,13 @@
 		document.write(mod.greet());
 		</script></pre>
 	</div>
+	<div class="Module">
+		<h1>JavaScript module (synchronous, relative)</h1>
+		<pre><script type="text/javascript">
+		var main = require('./relative/main.js');
+		document.writeln(main.greet());
+		</script></pre>
+	</div>
 	<div class="Bundle">
 		<h1>JavaScript bundle (asynchronous)</h1>
 		<pre id="asyncBundlePre"><script type="text/javascript">
@@ -133,13 +140,13 @@
 		document.writeln(world.greet());
 		</script></pre>
 	</div>
-	<div class="Cache">
+	<!--div class="Cache">
 		<h1>Cached modules</h1>
 		<pre><script type="text/javascript">
 		for (x in require.cache)
 			document.writeln('require.cache[\''+x+'\']');
 		</script></pre>
-	</div>
+	</div-->
 </body>
 
 </html>

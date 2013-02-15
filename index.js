@@ -4,23 +4,23 @@
 
 var urlCleaner = document.createElement('A');
 
+function load(source, exports, module) {
+	require.pwd.unshift(module.id.match(/^.*\//)[0]);
+	eval('('+source+')();\n//@ sourceURL='+module.uri+'\n');
+	require.pwd.shift();
+}
+
 function require(path, callback) {
 	var bInfo = require.resolve(path);
 	var mInfo = bInfo.sub?{'id':bInfo.id+'/'+bInfo.sub,'uri': bInfo.uri+'#'+bInfo.sub}:bInfo;
 
-	// TODO set relative paths
-
-	function load(source, module) {
-		var exports = new Object();
-		eval('('+source+')();\n//@ sourceURL='+module.uri+'\n');
-		return exports;
-	}
-
 	if (require.cache[bInfo.id]) {
-		if (!require.cache[mInfo.id])
-			require.cache[mInfo.id] = load(require.cache[bInfo.id][bInfo.sub], mInfo);
+		if (!require.cache[mInfo.id]) {
+			require.cache[mInfo.id] = new Object();
+			load(require.cache[bInfo.id][bInfo.sub], require.cache[mInfo.id], mInfo);
+		}
 		// NOTE The callback should always be called asynchronously to ensure
-		//      that a cached call won't be different from an uncached one.
+		//      that a cached call won't differ from an uncached one.
 		callback && setTimeout(function(){callback(require.cache[mInfo.id])}, 0);
 		return require.cache[mInfo.id];
 	}
@@ -34,10 +34,14 @@ function require(path, callback) {
 		if (this.status != 200)
 			throw 'Require() exception: GET '+bInfo.uri+' '+this.status+' ('+this.statusText+')';
 
-		if (!require.cache[bInfo.id])
-			require.cache[bInfo.id] = load('function(){\n'+this.responseText+'\n}', bInfo);
-		if (!require.cache[mInfo.id])
-			require.cache[mInfo.id] = load(require.cache[bInfo.id][bInfo.sub], mInfo);
+		if (!require.cache[bInfo.id]) {
+			require.cache[bInfo.id] = new Object();
+			load('function(){\n'+this.responseText+'\n}', require.cache[bInfo.id], bInfo);
+		}
+		if (!require.cache[mInfo.id]) {
+			require.cache[mInfo.id] = new Object();
+			load(require.cache[bInfo.id][bInfo.sub], require.cache[mInfo.id], mInfo);
+		}
 		hook = require.cache[mInfo.id];
 
 		callback && callback(hook);
@@ -49,8 +53,8 @@ function require(path, callback) {
 }
 
 require.resolve = function(path) {
-	var m = path.match(/^(\.{0,2}\/)?((?:[^\/]+\/+)*?)([^\/\.]+)?(\.[^\/]*)?(?:\/\/([^\/]+))?$/);
-	urlCleaner.href = (m[1]?(m[1]!='/'?require.pwd[0]:'')+m[1]:'/jsModules/')+m[2];
+	var m = path.match(/^(?:(\.{0,2})\/)?((?:[^\/]+\/+)*?)([^\/\.]+)?(\.[^\/]*)?(?:\/\/([^\/]+))?$/);
+	urlCleaner.href = (m[1]?require.pwd[0]+m[1]:'')+'/'+m[2];
 	
 	return {
 		'id': urlCleaner.pathname.replace(/\/\/+/g, '/')+(m[3]?m[3]:'index'),
@@ -59,10 +63,10 @@ require.resolve = function(path) {
 	};
 }
 
-// INFO initializing cache
+// INFO Module cache
 require.cache = new Object();
-// INFO Relative module path (0 = current)
-require.pwd = Array(location.pathname);
+// INFO Relative module paths (0 = current)
+require.pwd = Array(location.pathname.replace(/\/\/+/g, '/'));
 
 if (window.require !== undefined)
 	throw 'RequireException: \'require\' already defined in global scope';
