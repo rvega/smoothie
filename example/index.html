@@ -55,7 +55,7 @@
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		mname = './module.js';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname))); 
-		mname = '../module.js';
+		mname = '../../module.js';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		mname = 'module.js';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname))); 
@@ -101,7 +101,7 @@
 	<div class="Module">
 		<h1>JavaScript module (cached via id)</h1>
 		<pre><script type="text/javascript">
-		var mod = require('./module.js');
+		var mod = require('/module');
 		document.writeln(mod.greet());
 		</script></pre>
 	</div>
@@ -141,9 +141,9 @@
 	<div class="Bundle">
 		<h1>JavaScript bundle (cached via id)</h1>
 		<pre><script type="text/javascript">
-		var hello = require('/PixelsVsBytes/Repositories/Jay/git/example/bundle/hello');
+		var hello = require('/bundle/hello');
 		document.writeln(hello.greet());
-		var world = require('/PixelsVsBytes/Repositories/Jay/git/example/bundle/world');
+		var world = require('/bundle/world');
 		document.writeln(world.greet());
 		</script></pre>
 	</div>
