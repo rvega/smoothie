@@ -51,32 +51,27 @@
 	<div class="Resolve">
 		<h1>URL resolvings</h1>
 		<pre><script type="text/javascript">
+		var parser = document.createElement('A');
+		parser.href = '/foo/bar/./././baz///moo/maa/../../../mee/gee';
+		document.writeln(parser.href);
+
+		mname = 'module';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+		mname = './module';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+		mname = '../module';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+
+		mname = 'module.js';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname))); 
 		var mname = '/module.js';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		mname = './module.js';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname))); 
-		mname = '../../module.js';
-		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = 'module.js';
-		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname))); 
-		mname = './module.json';
-		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = './module';
+		mname = '../module.js';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 
-		mname = './module//foo';
-		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = './module.js//foo';
-		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = './bar/baz/module.js//foo';
-		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = 'module//foo';
-		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = 'module.js//foo';
-		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = 'bar/baz/.//foo';
-		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = './/.//bar//foo';
+		mname = '../foo/bar/./././baz///moo/maa/../../../mee/gee';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		</script></pre>
 	</div>
@@ -101,7 +96,7 @@
 	<div class="Module">
 		<h1>JavaScript module (cached via id)</h1>
 		<pre><script type="text/javascript">
-		var mod = require('/module');
+		var mod = require('module');
 		document.writeln(mod.greet());
 		</script></pre>
 	</div>
@@ -111,8 +106,8 @@
 		var main = require('./relative/main.js');
 		document.writeln(main.greet());
 		</script></pre>
-	</div>
-	<div class="Bundle">
+	</div-->
+	<!--div class="Bundle">
 		<h1>JavaScript bundle (asynchronous)</h1>
 		<pre id="asyncBundlePre"><script type="text/javascript">
 		require('./bundle.js//hello', function(mod) {
@@ -146,7 +141,7 @@
 		var world = require('/bundle/world');
 		document.writeln(world.greet());
 		</script></pre>
-	</div>
+	</div-->
 	<!--div class="Cache">
 		<h1>Cached modules</h1>
 		<pre><script type="text/javascript">
