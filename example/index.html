@@ -91,7 +91,7 @@
 	<div class="Module">
 		<h1>JavaScript module (synchronous)</h1>
 		<pre><script type="text/javascript">
-		var mod = require('./module.js');
+		var mod = require('module');
 		document.writeln(mod.greet());
 		mod.worldstr = 'module';
 		document.write(mod.greet());
@@ -107,18 +107,19 @@
 	<div class="Module">
 		<h1>JavaScript module (synchronous, relative)</h1>
 		<pre><script type="text/javascript">
-		var main = require('./relative/main.js');
+		var main = require('./relative/main');
 		document.writeln(main.greet());
 		</script></pre>
-	</div-->
-	<!--div class="Bundle">
+	</div>
+	<div class="Bundle">
 		<h1>JavaScript bundle (asynchronous)</h1>
 		<pre id="asyncBundlePre"><script type="text/javascript">
-		require('./bundle.js//hello', function(mod) {
+		require('./bundle');
+		require('./bundle/hello', function(mod) {
 			var node = document.getElementById('asyncBundlePre');
 			node.innerHTML += mod.greet()+'\n';
 		});
-		require('./bundle.js//world', function(mod) {
+		require('./bundle/world', function(mod) {
 			var node = document.getElementById('asyncBundlePre');
 			node.innerHTML += mod.greet()+'\n';
 		});
@@ -127,11 +128,11 @@
 	<div class="Bundle">
 		<h1>JavaScript bundle (synchronous)</h1>
 		<pre><script type="text/javascript">
-		var hello = require('./bundle.js//hello');
+		var hello = require('./bundle/hello');
 		document.writeln(hello.greet());
 		hello.hellostr = 'hej';
 		document.writeln(hello.greet());
-		var world = require('./bundle.js//world');
+		var world = require('./bundle/world');
 		document.writeln(world.greet());
 		world.worldstr = 'verden';
 		document.writeln(world.greet());
@@ -145,7 +146,22 @@
 		var world = require('/bundle/world');
 		document.writeln(world.greet());
 		</script></pre>
-	</div-->
+	</div>
+	<div class="Bundle">
+		<h1>JavaScript bundle (deep)</h1>
+		<pre><script type="text/javascript">
+		require('./water');
+		var fish = require('/water/sea/fish');
+		document.writeln(fish.greet());
+		var shark = require('/water/sea/shark');
+		document.writeln(shark.greet());
+		require('/water/ocean');
+		var whale = require('/water/ocean/whale');
+		document.writeln(whale.greet());
+		var dolphin = require('/water/ocean/dolphin');
+		document.writeln(dolphin.greet());
+		</script></pre>
+	</div>
 	<!--div class="Cache">
 		<h1>Cached modules</h1>
 		<pre><script type="text/javascript">

@@ -15,12 +15,23 @@ var parser = document.createElement('A');
 function require(path, callback) {
 	var module = require.resolve(path);
 
-	if (cache[module.id]) {
-		// NOTE The callback should always be called asynchronously to ensure
-		//      that a cached call won't differ from an uncached one.
-		callback && setTimeout(function(){callback(cache[module.id])}, 0);
-		return cache[module.id];
-	}	
+	var terms = module.id.split('/');;
+	for (var i = terms.length; i > 0; i--) {
+		var bundle = terms.slice(0,i).join('/');  
+		if (cache[bundle]) {
+			for (; i < terms.length; i++) {
+				var m = require.resolve(bundle+'/'+terms[i]);
+				if (!cache[bundle][terms[i]])
+					throw 'require() exception: '+terms[i]+' not found in bundle '+bundle;
+				load(m, cache, pwd, cache[bundle][terms[i]]);
+				bundle = m.id;
+			}
+			// NOTE The callback should always be called asynchronously to ensure
+			//      that a cached call won't differ from an uncached one.
+			callback && setTimeout(function(){callback(cache[module.id])}, 0);
+			return cache[module.id];
+		}
+	}
 	cache[module.id] = null;
 	
 	var request = new XMLHttpRequest();
@@ -31,12 +42,9 @@ function require(path, callback) {
 	
 	function onLoad() {
 		if (request.status != 200)
-			throw 'Require() exception: GET '+module.uri+' '+request.status+' ('+request.statusText+')';
+			throw 'require() exception: GET '+module.uri+' '+request.status+' ('+request.statusText+')';
 		if (!cache[module.id]) { 
-			cache[module.id] = new Object();
-			pwd.unshift(module.id.match(/(?:.*\/)?/)[0]);
-			load(cache[module.id], module, 'function(){\n'+request.responseText+'\n}');
-			pwd.shift();
+			load(module, cache, pwd, 'function(){\n'+request.responseText+'\n}');
 		}
 		callback && callback(cache[module.id]);
 	}
@@ -60,6 +68,9 @@ window.require = require;
 //      a parameter to the closure above, to provide a clean environment (only
 //      global variables, module and exports) for the loaded module. This is
 //      also the reason why 'source' is not a named parameter.
-})(function(exports, module/*, source*/) {
-	eval('('+arguments[2]+')();\n//@ sourceURL='+module.uri+'\n');
+})(function(module/*, cache, pwd, source*/) {
+	var exports = arguments[1][module.id] = new Object();
+	arguments[2].unshift(module.id.match(/(?:.*\/)?/)[0]);
+	eval('('+arguments[3]+')();\n//@ sourceURL='+module.uri+'\n');
+	arguments[2].shift();
 });
