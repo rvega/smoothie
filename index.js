@@ -13,14 +13,14 @@ var cache = new Object();
 var parser = document.createElement('A');
 
 function require(path, callback) {
-	var module = require.resolve(path);
+	var module = resolve(path);
 
 	var terms = module.id.split('/');;
 	for (var i = terms.length; i > 0; i--) {
 		var bundle = terms.slice(0,i).join('/');  
 		if (cache[bundle]) {
 			for (; i < terms.length; i++) {
-				var m = require.resolve(bundle+'/'+terms[i]);
+				var m = resolve(bundle+'/'+terms[i]);
 				if (!cache[bundle][terms[i]])
 					throw 'require() exception: '+terms[i]+' not found in bundle '+bundle;
 				load(m, cache, pwd, cache[bundle][terms[i]]);
@@ -50,7 +50,7 @@ function require(path, callback) {
 	}
 }
 
-require.resolve = function(path) {
+function resolve(path) {
 	var m = path.match(/^(\.\.?)?\/?((?:.*\/)?)([^\.]+)?(\..*)?$/);
 	parser.href = '/'+((m[1]?pwd[0]+m[1]+'/':'')+m[2])+(m[3]?m[3]:'index');
 	return {
@@ -61,7 +61,17 @@ require.resolve = function(path) {
 
 if (window.require !== undefined)
 	throw 'RequireException: \'require\' already defined in global scope';
-window.require = require;
+
+// NOTE Older browsers (including IE8) don't know about defineProperty, so we
+//      have to use the unsave method as fallback in these cases.
+try {
+	Object.defineProperty(require, 'resolve', {'value':resolve,'writable':false,'configurable':false});
+	Object.defineProperty(window, 'require', {'value':require,'writable':false,'configurable':false});
+}
+catch(e) {
+	require.resolve = resolve;
+	window.require = require;
+}
 
 // INFO Module loader
 // NOTE This functions is defined as an anonymous function, which is passed a
