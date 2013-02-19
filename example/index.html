@@ -73,6 +73,10 @@
 
 		mname = '../foo/bar/./././baz///moo/maa/../../../mee/gee';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+		mname = 'foo/bar//baz///moo////maa/mee';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+		mname = '/home/torben/PixelsVsBytes/Repositories///Jay/../../..';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		</script></pre>
 	</div>
 	<div class="Module">

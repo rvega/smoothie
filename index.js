@@ -9,6 +9,8 @@ var root = location.pathname;
 var pwd = Array('');
 // INFO Module cache
 var cache = new Object();
+// INFO Path parser
+var parser = document.createElement('A');
 
 function require(path, callback) {
 	var module = require.resolve(path);
@@ -42,17 +44,11 @@ function require(path, callback) {
 
 require.resolve = function(path) {
 	var m = path.match(/^(\.\.?)?\/?((?:.*\/)?)([^\.]+)?(\..*)?$/);
-
-	var id = ((m[1]?pwd[0]+m[1]+'/':'')+m[2])+(m[3]?m[3]:'index');
-	// NOTE Remove // and ./
-	id = id.replace(/(^|\/)(?:\.?\/)+/g, '$1');
-	// NOTE Resolve ../ 
-	id = id.replace(/([^\.]*)((?:\.\.\/)+)/g, function(m, a, b) {
-		var i = a.split('/').length-b.split('/').length; 
-		return i>0?a.match(new RegExp('(?:[^\/]*\/){0,'+i+'}'))[0]:'';
-	});
-
-	return {'id':id, 'uri':root+id+(m[4]?m[4]:'.js')};
+	parser.href = '/'+((m[1]?pwd[0]+m[1]+'/':'')+m[2])+(m[3]?m[3]:'index');
+	return {
+		'id': parser.href.replace(/^[^:]*:\/\/[^\/]*\/|\/(?=\/)/g, ''),
+		'uri': root+parser.href.replace(/^[^:]*:\/\/[^\/]*\//, '')+(m[4]?m[4]:'.js')
+	};
 }
 
 if (window.require !== undefined)
