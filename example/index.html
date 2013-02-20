@@ -5,9 +5,6 @@
 <head>
 	<meta charset="UTF-8"> 
 	<style type="text/css">
-
-		/* INFO Some other CSS for the look */
-		
 		body {
 			background: #999;
 			margin: 0em;
@@ -39,17 +36,14 @@
 		.Cache {
 			background: #ffd;
 		}
-
-
-
 	</style>
-	<script type="text/javascript" src="../index.js"></script>
-	<title>Pixels vs. Bytes | Example: Node.js require() for your browser</title>
+	<script type="text/javascript" src="../require.js"></script>
+	<title>Pixels vs. Bytes | Jay Example: require()</title>
 </head>
 
 <body class="Grid">
 	<div class="Resolve">
-		<h1>URL resolvings</h1>
+		<h1>Module identifier => module object</h1>
 		<pre><script type="text/javascript">
 		var parser = document.createElement('A');
 		parser.href = '/foo/bar/./././baz///moo/maa/../../../mee/gee';
@@ -162,13 +156,13 @@
 		document.writeln(dolphin.greet());
 		</script></pre>
 	</div>
-	<!--div class="Cache">
-		<h1>Cached modules</h1>
+	<div class="Bundle">
+		<h1>JavaScript module (inside bundle dir)</h1>
 		<pre><script type="text/javascript">
-		for (x in require.cache)
-			document.writeln('require.cache[\''+x+'\']');
+		var frog = require('water/lake/frog');
+		document.writeln(frog.greet());
 		</script></pre>
-	</div-->
+	</div>
 </body>
 
 </html>

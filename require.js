@@ -19,24 +19,26 @@ function require(path, callback) {
 	for (var i = terms.length; i > 0; i--) {
 		var bundle = terms.slice(0,i).join('/');  
 		if (cache[bundle]) {
-			for (; i < terms.length; i++) {
+			while (cache[bundle][terms[i]]) {
 				var m = resolve(bundle+'/'+terms[i]);
-				if (!cache[bundle][terms[i]])
-					throw 'require() exception: '+terms[i]+' not found in bundle '+bundle;
 				load(m, cache, pwd, cache[bundle][terms[i]]);
 				bundle = m.id;
+				i++;
 			}
-			// NOTE The callback should always be called asynchronously to ensure
-			//      that a cached call won't differ from an uncached one.
-			callback && setTimeout(function(){callback(cache[module.id])}, 0);
-			return cache[module.id];
+			if (cache[module.id]) {
+				// NOTE The callback should always be called asynchronously to ensure
+				//      that a cached call won't differ from an uncached one.
+				callback && setTimeout(function(){callback(cache[module.id])}, 0);
+				return cache[module.id];
+			}
+			break;
 		}
 	}
-	cache[module.id] = null;
-	
+
 	var request = new XMLHttpRequest();
 	request.open('GET', module.uri, !!callback);
 	request.send();
+	cache[module.id] = null;	
 	request.onload = callback?onLoad:onLoad();
 	return cache[module.id];
 	
