@@ -1,25 +1,20 @@
-exports.sea = function() {
-	exports.fish = function() {
+module = {
+	'fish': function() {
 		exports.greet = function() {
 			return "Hello from fish";
 		}
-	}
-
-	exports.shark = function() {
+	},
+	'./shark': function() {
 		exports.greet = function() {
 			return "Hello from shark";
 		}
-	}
-}
-
-exports.ocean = function() {
-	exports.whale = function() {
+	},
+	'../whale': function() {
 		exports.greet = function() {
 			return "Hello from whale";
 		}
-	}
-
-	exports.dolphin = function() {
+	},
+	'ocean/dolphin': function() {
 		exports.greet = function() {
 			return "Hello from dolphin";
 		}

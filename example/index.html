@@ -108,12 +108,12 @@
 	<div class="Bundle">
 		<h1>JavaScript bundle (asynchronous)</h1>
 		<pre id="asyncBundlePre"><script type="text/javascript">
-		require('./bundle');
-		require('./bundle/hello', function(mod) {
+		require('bundle');
+		require('hello', function(mod) {
 			var node = document.getElementById('asyncBundlePre');
 			node.innerHTML += mod.greet()+'\n';
 		});
-		require('./bundle/world', function(mod) {
+		require('world', function(mod) {
 			var node = document.getElementById('asyncBundlePre');
 			node.innerHTML += mod.greet()+'\n';
 		});
@@ -122,11 +122,11 @@
 	<div class="Bundle">
 		<h1>JavaScript bundle (synchronous)</h1>
 		<pre><script type="text/javascript">
-		var hello = require('./bundle/hello');
+		var hello = require('hello');
 		document.writeln(hello.greet());
 		hello.hellostr = 'hej';
 		document.writeln(hello.greet());
-		var world = require('./bundle/world');
+		var world = require('world');
 		document.writeln(world.greet());
 		world.worldstr = 'verden';
 		document.writeln(world.greet());
@@ -135,32 +135,24 @@
 	<div class="Bundle">
 		<h1>JavaScript bundle (cached via id)</h1>
 		<pre><script type="text/javascript">
-		var hello = require('/bundle/hello');
+		var hello = require('hello');
 		document.writeln(hello.greet());
-		var world = require('/bundle/world');
+		var world = require('world');
 		document.writeln(world.greet());
 		</script></pre>
 	</div>
 	<div class="Bundle">
 		<h1>JavaScript bundle (deep)</h1>
 		<pre><script type="text/javascript">
-		require('./water');
-		var fish = require('/water/sea/fish');
+		require('relative/water');
+		var fish = require('fish');
 		document.writeln(fish.greet());
-		var shark = require('/water/sea/shark');
+		var shark = require('relative/shark');
 		document.writeln(shark.greet());
-		require('/water/ocean');
-		var whale = require('/water/ocean/whale');
+		var whale = require('whale');
 		document.writeln(whale.greet());
-		var dolphin = require('/water/ocean/dolphin');
+		var dolphin = require('ocean/dolphin');
 		document.writeln(dolphin.greet());
-		</script></pre>
-	</div>
-	<div class="Bundle">
-		<h1>JavaScript module (inside bundle dir)</h1>
-		<pre><script type="text/javascript">
-		var frog = require('water/lake/frog');
-		document.writeln(frog.greet());
 		</script></pre>
 	</div>
 </body>

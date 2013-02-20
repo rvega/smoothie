@@ -12,27 +12,16 @@ var cache = new Object();
 // INFO Path parser
 var parser = document.createElement('A');
 
-function require(path, callback) {
-	var module = resolve(path);
+function require(identifier, callback) {
+	var module = resolve(identifier);
 
-	var terms = module.id.split('/');;
-	for (var i = terms.length; i > 0; i--) {
-		var bundle = terms.slice(0,i).join('/');  
-		if (cache[bundle]) {
-			while (cache[bundle][terms[i]]) {
-				var m = resolve(bundle+'/'+terms[i]);
-				load(m, cache, pwd, cache[bundle][terms[i]]);
-				bundle = m.id;
-				i++;
-			}
-			if (cache[module.id]) {
-				// NOTE The callback should always be called asynchronously to ensure
-				//      that a cached call won't differ from an uncached one.
-				callback && setTimeout(function(){callback(cache[module.id])}, 0);
-				return cache[module.id];
-			}
-			break;
-		}
+	if (cache[module.id]) {
+		if (typeof cache[module.id] === 'function')
+			load(module, cache, pwd, cache[module.id]);
+		// NOTE The callback should always be called asynchronously to ensure
+		//      that a cached call won't differ from an uncached one.
+		callback && setTimeout(function(){callback(cache[module.id])}, 0);
+		return cache[module.id];
 	}
 
 	var request = new XMLHttpRequest();
@@ -48,12 +37,14 @@ function require(path, callback) {
 		if (!cache[module.id]) { 
 			load(module, cache, pwd, 'function(){\n'+request.responseText+'\n}');
 		}
-		callback && callback(cache[module.id]);
+		else {
+			callback && callback(cache[module.id]);
+		}
 	}
 }
 
-function resolve(path) {
-	var m = path.match(/^(\.\.?)?\/?((?:.*\/)?)([^\.]+)?(\..*)?$/);
+function resolve(identifier) {
+	var m = identifier.match(/^(\.\.?)?\/?((?:.*\/)?)([^\.]+)?(\..*)?$/);
 	parser.href = '/'+((m[1]?pwd[0]+m[1]+'/':'')+m[2])+(m[3]?m[3]:'index');
 	return {
 		'id': parser.href.replace(/^[^:]*:\/\/[^\/]*\/|\/(?=\/)/g, ''),
@@ -84,5 +75,9 @@ catch(e) {
 	var exports = arguments[1][module.id] = new Object();
 	arguments[2].unshift(module.id.match(/(?:.*\/)?/)[0]);
 	eval('('+arguments[3]+')();\n//@ sourceURL='+module.uri+'\n');
+	// NODE Add modules into cache if loaded file is a bundle
+	if (typeof module.id !== 'String')
+		for (id in module)
+			arguments[1][require.resolve(id).id] = module[id];
 	arguments[2].shift();
 });
