@@ -1,20 +1,20 @@
 module = {
-	'hello': function() {
+	'module1': function() {
 		'use strict';
 
 		exports.hellostr = 'hello';
 
 		exports.greet = function() {
-			return exports.hellostr+' WORLD from '+module.id+'!';
+			return exports.hellostr+' world from '+module.id+'!';
 		}
 	},
-	'world': function() {
+	'module2': function() {
 		'use strict';
 
 		exports.worldstr = 'world';
 
 		exports.greet = function() {
-			return 'HELLO '+exports.worldstr+' from '+module.id+'!';
+			return 'hello '+exports.worldstr+' from '+module.id+'!';
 		}
 	}
 }

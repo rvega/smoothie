@@ -7,11 +7,18 @@
 	<style type="text/css">
 		body {
 			background: #999;
+			color: #000;
 			margin: 0em;
 		}
 
-		pre {
+		div {
 			margin: 1em;
+			overflow: hidden;
+		}
+
+		p, pre {
+			margin: 1em;
+			overflow: auto;
 		}
 
 		h1 {
@@ -19,36 +26,27 @@
 			margin: 0.5em;
 		}
 
-		div, p {
-			margin: 1em;
-			overflow: hidden;
-		}
-
-		.Resolve {
+		.Red {
 			background: #fdd;
 		}
-		.Module {
+		.Green {
 			background: #dfd;
 		}
-		.Bundle {
+		.Blue {
 			background: #ddf;
 		}
-		.Cache {
+		.Yellow {
 			background: #ffd;
 		}
 	</style>
-	<script type="text/javascript" src="../require.js"></script>
-	<title>Pixels vs. Bytes | Jay Example: require()</title>
+	<script type="text/javascript" src="../../base/require.js"></script>
+	<title>Smoothie Example: require.js</title>
 </head>
 
-<body class="Grid">
-	<div class="Resolve">
-		<h1>Module identifier => module object</h1>
+<body>
+	<div class="Red">
+		<h1>Identifier => Module</h1>
 		<pre><script type="text/javascript">
-		var parser = document.createElement('A');
-		parser.href = '/foo/bar/./././baz///moo/maa/../../../mee/gee';
-		document.writeln(parser.href);
-
 		mname = 'module';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		mname = './module';
@@ -73,8 +71,8 @@
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		</script></pre>
 	</div>
-	<div class="Module">
-		<h1>JavaScript module (asynchronous)</h1>
+	<div class="Green">
+		<h1>Module (asynchronous)</h1>
 		<pre id="asyncModulePre"><script type="text/javascript">
 		require('./module.js', function(mod) {
 			var node = document.getElementById('asyncModulePre');
@@ -82,67 +80,67 @@
 		});
 		</script></pre>
 	</div>
-	<div class="Module">
-		<h1>JavaScript module (synchronous)</h1>
+	<div class="Green">
+		<h1>Module (synchronous)</h1>
 		<pre><script type="text/javascript">
 		var mod = require('module');
 		document.writeln(mod.greet());
-		mod.worldstr = 'module';
+		mod.greetstr = 'HELLO WORLD';
 		document.write(mod.greet());
 		</script></pre>
 	</div>
-	<div class="Module">
-		<h1>JavaScript module (cached via id)</h1>
+	<div class="Green">
+		<h1>Module (cached)</h1>
 		<pre><script type="text/javascript">
 		var mod = require('module');
 		document.writeln(mod.greet());
 		</script></pre>
 	</div>
-	<div class="Module">
-		<h1>JavaScript module (synchronous, relative)</h1>
+	<div class="Green">
+		<h1>Module (synchronous, relative)</h1>
 		<pre><script type="text/javascript">
 		var main = require('./relative/main');
 		document.writeln(main.greet());
 		</script></pre>
 	</div>
-	<div class="Bundle">
-		<h1>JavaScript bundle (asynchronous)</h1>
+	<div class="Blue">
+		<h1>Bundle (asynchronous)</h1>
 		<pre id="asyncBundlePre"><script type="text/javascript">
 		require('bundle');
-		require('hello', function(mod) {
+		require('module1', function(mod) {
 			var node = document.getElementById('asyncBundlePre');
 			node.innerHTML += mod.greet()+'\n';
 		});
-		require('world', function(mod) {
+		require('module2', function(mod) {
 			var node = document.getElementById('asyncBundlePre');
 			node.innerHTML += mod.greet()+'\n';
 		});
 		</script></pre>
 	</div>
-	<div class="Bundle">
-		<h1>JavaScript bundle (synchronous)</h1>
+	<div class="Blue">
+		<h1>Bundle (synchronous)</h1>
 		<pre><script type="text/javascript">
-		var hello = require('hello');
-		document.writeln(hello.greet());
-		hello.hellostr = 'hej';
-		document.writeln(hello.greet());
-		var world = require('world');
-		document.writeln(world.greet());
-		world.worldstr = 'verden';
-		document.writeln(world.greet());
+		var mod1 = require('module1');
+		document.writeln(mod1.greet());
+		mod1.hellostr = 'HELLO';
+		document.writeln(mod1.greet());
+		var mod2 = require('module2');
+		document.writeln(mod2.greet());
+		mod2.worldstr = 'WORLD';
+		document.writeln(mod2.greet());
 		</script></pre>
 	</div>
-	<div class="Bundle">
-		<h1>JavaScript bundle (cached via id)</h1>
+	<div class="Blue">
+		<h1>Bundle (cached)</h1>
 		<pre><script type="text/javascript">
-		var hello = require('hello');
-		document.writeln(hello.greet());
-		var world = require('world');
-		document.writeln(world.greet());
+		var mod1 = require('module1');
+		document.writeln(mod1.greet());
+		var mod2 = require('module2');
+		document.writeln(mod2.greet());
 		</script></pre>
 	</div>
-	<div class="Bundle">
-		<h1>JavaScript bundle (deep)</h1>
+	<div class="Blue">
+		<h1>Bundle (synchronous, relative)</h1>
 		<pre><script type="text/javascript">
 		require('relative/water');
 		var fish = require('fish');
