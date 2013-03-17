@@ -12,6 +12,7 @@
 // details.You should have received a copy of the GNU Lesser General Public
 // License along with Smoothie.  If not, see <http://www.gnu.org/licenses/>.
 //
+////////////////////////////////////////////////////////////////////////////////
 
 // NOTE The load parameter points to the function, which prepares the
 //      environment for each module and runs its code. Scroll down to the end of

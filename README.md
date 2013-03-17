@@ -9,3 +9,4 @@ specification. More information can be found in my post at Pixel vs. Bytes:
 http://pixelsvsbytes.com/blog/2013/02/js-require-for-browsers-better-faster-stronger/
 
 Smoothie is licensed as open source under the LGPL v3.
+Copyright 2013 Torben Haase <http://pixelsvsbytes.com/>.
