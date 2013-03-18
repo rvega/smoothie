@@ -3,62 +3,54 @@
 <html>
 
 <head>
-	<meta charset="UTF-8">
-	<title>Smoothie Example: base/fixes/css.js</title>
-	<link rel="stylesheet" href="stylesheet.css" type="text/css" charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Smoothie Example for fixes/fontSmoothing module</title>
+
+	<link rel="stylesheet" href="../example.css" type="text/css" charset="utf-8">
+	<link rel="stylesheet" href="./calluna-regular-link.css" type="text/css" charset="utf-8">
 	<style type="text/css">
-		body {
-			background: #999;
-			color: #000;
-			margin: 0em;
+		@import url('calluna-regular-imported.css');
+
+		@font-face {
+			font-family: 'calluna-regular';
+			src: url('calluna-regular-grayscale-webfont.eot');
+			src: url('calluna-regular-grayscale-webfont.eot?#iefix') format('embedded-opentype'),
+				 url('calluna-regular-directwrite-webfont.woff') format('woff'),
+				 url('calluna-regular-directwrite-webfont.ttf') format('truetype'),
+				 url('calluna-regular-directwrite-webfont.svg#callunaregular') format('svg');
+			font-weight: normal;
+			font-style: normal;
 		}
 
-		div {
-			margin: 1em;
-			overflow: hidden;
-		}
-
-		p, pre {
-			margin: 1em;
-			overflow: auto;
-		}
-
-		h1 {
-			font-size: 2em;
-			margin: 0.5em;
-		}
-
-		.Red {
-			background: #fdd;
-		}
-		.Green {
-			background: #dfd;
-		}
-		.Blue {
-			background: #ddf;
-		}
-		.Yellow {
-			background: #ffd;
-		}
-
-		#Demo * {
+		#Demo h2,p {
 			font-family: 'calluna-regular';
 			font-weight: normal;
 		}
+		#Demo p.Link {
+			font-family: 'calluna-regular-link';
+		}
+		#Demo p.Imported {
+			font-family: 'calluna-regular-imported';
+		}
 	</style>
-	<script type="text/javascript">
-		var smoothie = {'requireRoot':'../../modules/'};
-	</script>
+
+	<script type="text/javascript">var smoothie = {'requireRoot':'../../modules/'};</script>
 	<script type="text/javascript" src="../../base/require.js"></script>
 	<script type="text/javascript">
-		window.onload = require('fixes/fontSmoothing').apply;
+		window.onload = function() {
+			require('fixes/fontSmoothing').apply();
+		}
 	</script>
 </head>
 
 <body>
+	<h1>Smoothie Example for fixes/fontSmoothing module</h1>
 	<div id="Demo" class="Red">
-		<h1>The quick brown fox jumps over the lazy dog</h1>
+		<h2>The quick brown fox jumps over the lazy dog</h2>
 		<p>abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</p>
+		<p class="Link">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</p>
+		<p class="Imported">abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</p>
 	</div>
 	<p>You should see a smooth text in Calluna type in the red box. If not you've found a bug ;)</p>
 </body>
