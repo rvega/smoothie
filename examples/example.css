@@ -1,0 +1,36 @@
+
+/* INFO Generic look for all examples */
+
+body {
+	background: #999;
+	color: #000;
+	margin: 0em;
+}
+
+div {
+	margin: 1em;
+	overflow: hidden;
+}
+
+p, pre {
+	margin: 1em;
+	overflow: auto;
+}
+
+h1, h2 {
+	font-size: 2em;
+	margin: 0.5em;
+}
+
+.Red {
+	background: #fdd;
+}
+.Green {
+	background: #dfd;
+}
+.Blue {
+	background: #ddf;
+}
+.Yellow {
+	background: #ffd;
+}
