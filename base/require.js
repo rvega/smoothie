@@ -20,7 +20,7 @@
 (function(load) { 'use strict';
 
 // INFO Module root
-var root = location.pathname;
+var root = window.smoothie&&window.smoothie.requireRoot?window.smoothie.requireRoot:location.pathname;
 // INFO Module path (0 = current)
 var pwd = Array('');
 // INFO Module cache
