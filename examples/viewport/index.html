@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Smoothie Example for widgets/viewport module</title>
+
+	<link rel="stylesheet" href="../example.css" type="text/css" charset="utf-8">
+	<style type="text/css">
+		.Viewport,
+		.Viewport> .Spreader,
+		.Viewport> .Frame,
+		.Viewport> .Frame> .View {
+			margin: 0em;
+			padding: 0em;
+		}
+ 
+		.Viewport> .Spreader,
+		.Viewport> .Frame {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0%;
+			left: 0%;
+		}
+		.Viewport> .Frame> .View {
+			overflow: hidden;
+			position: absolute;
+			min-width: 100%;
+			min-height: 100%;
+			top: 0%;
+			left: 0%;
+			/* NOTE Prevents start-flicker in iOS */
+			backface-visibiliy: hidden;
+			-webkit-backface-visibiliy: hidden;
+		}
+		.Viewport.animated {
+			overflow: hidden;
+		}
+		.Viewport.animated> .Frame {
+			animation: ViewportAnimation 1s;
+			-webkit-animation: ViewportAnimation 1s;
+			/* NOTE Prevents stop-flicker in Opera */
+			animation-fill-mode: both;
+			-webkit-animation-fill-mode: both;
+		}
+	</style>
+	<script type="text/javascript">var smoothie = {'requireRoot':'../../modules/'};</script>
+	<!-- <script type="text/javascript" src="../../base/zen.js"></script> -->
+	<script type="text/javascript" src="../../base/require.js"></script>
+	<script type="text/javascript">
+		var vp = require('widgets/viewport');
+		var viewports = document.getElementsByClassName('Viewport');
+
+		var transform = vp.createMatrix2D();
+		//var transform = Viewport.createMatrix2D(0,-1, 1,0, 0,0);
+		//var transform = Viewport.createMatrix2D(-1,0, 0,-1, 0,0);
+		//var transform = Viewport.createMatrix2D(0,1, -1,0, 0,0);
+		//var transform = Viewport.createMatrix2D(0.766,-0.643, 0.643,0.766, -750,-1250);
+
+		//var transform = Viewport.createMatrix2D(0.5,0, 0,0.5, 0,0);
+		//var transform = Viewport.createMatrix2D(2,0, 0,2, 0,0);
+		//var transform = Viewport.createMatrix2D(3,0, 0,0.2, -750,-1250);
+
+		//var transform = Viewport.createMatrix2D(0.433013,-0.25, 0.25,0.433013, 0,0);
+		//var transform = Viewport.createMatrix2D(1.73205,-1, 1,1.73205, 0,0);
+		//var transform = Viewport.createMatrix2D(0.433013,-1, 0.25,1.73205, -750,-1250);
+
+		var bodyViewport = null;
+		
+		function transiteBodyLeft() { transite(bodyViewport, 'from-left');}
+		function transiteBodyRight() { transite(bodyViewport, 'from-right'); }
+		function transiteBodyTop() { transite(bodyViewport, 'from-top'); }
+		function transiteBodyBottom() { transite(bodyViewport, 'from-bottom'); }
+
+		function transite(viewport, mode) {
+			viewport.add(viewport.views[0].cloneNode(true));
+			viewport.transite(mode, transform);
+		}
+
+		window.onload = function() {
+			bodyViewport = vp.createViewport(viewports[0]);
+		}
+	</script>
+</head>
+
+<body class="Viewport">
+	<div class="Spreader"></div>
+	<ul class="Frame">
+		<li class="View">
+			<h1>Smoothie Example for widgets/viewport module</h1>
+			<div class="Box Red">
+				<p><button onclick="transiteBodyLeft();">from-left</button><button onclick="transiteBodyRight();">from-right</button></p>
+				<p><button onclick="transiteBodyTop();">from-top</button><button onclick="transiteBodyBottom();">from-bottom</button></p>
+			</div>
+			<div class="Box Blue">
+				<h2>Just a bit lorem ipsum to have some content</h2>
+				<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo ypi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.</p>
+				<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo ypi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.</p>
+				<h2>And some more lorem ipsum content</h2>
+				<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo ypi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.</p>
+				<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo ypi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum.</p>
+			</div>
+		</li>
+	</ul>
+</body>
+
+</html>
+
