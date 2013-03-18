@@ -7,9 +7,9 @@ body {
 	margin: 0em;
 }
 
-div {
-	margin: 1em;
-	overflow: hidden;
+h1, h2 {
+	font-size: 2em;
+	margin: 0.5em;
 }
 
 p, pre {
@@ -17,20 +17,19 @@ p, pre {
 	overflow: auto;
 }
 
-h1, h2 {
-	font-size: 2em;
-	margin: 0.5em;
+div.Box {
+	margin: 1em;
+	overflow: hidden;
 }
-
-.Red {
+div.Box.Red {
 	background: #fdd;
 }
-.Green {
+div.Box.Green {
 	background: #dfd;
 }
-.Blue {
+div.Box.Blue {
 	background: #ddf;
 }
-.Yellow {
+div.Box.Yellow {
 	background: #ffd;
 }

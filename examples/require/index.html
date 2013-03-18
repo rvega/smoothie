@@ -14,7 +14,7 @@
 
 <body>
 	<h1>Smoothie Example for require() functionality</h1>
-	<div class="Red">
+	<div class="Box Red">
 		<h2>Identifier => Module</h2>
 		<pre><script type="text/javascript">
 		mname = 'module';
@@ -41,7 +41,7 @@
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		</script></pre>
 	</div>
-	<div class="Green">
+	<div class="Box Green">
 		<h2>Module (asynchronous)</h2>
 		<pre id="asyncModulePre"><script type="text/javascript">
 		require('./module.js', function(mod) {
@@ -50,7 +50,7 @@
 		});
 		</script></pre>
 	</div>
-	<div class="Green">
+	<div class="Box Green">
 		<h2>Module (synchronous)</h2>
 		<pre><script type="text/javascript">
 		var mod = require('module');
@@ -59,21 +59,21 @@
 		document.write(mod.greet());
 		</script></pre>
 	</div>
-	<div class="Green">
+	<div class="Box Green">
 		<h2>Module (cached)</h2>
 		<pre><script type="text/javascript">
 		var mod = require('module');
 		document.writeln(mod.greet());
 		</script></pre>
 	</div>
-	<div class="Green">
+	<div class="Box Green">
 		<h2>Module (synchronous, relative)</h2>
 		<pre><script type="text/javascript">
 		var main = require('./relative/main');
 		document.writeln(main.greet());
 		</script></pre>
 	</div>
-	<div class="Blue">
+	<div class="Box Blue">
 		<h2>Bundle (asynchronous)</h2>
 		<pre id="asyncBundlePre"><script type="text/javascript">
 		require('bundle');
@@ -87,7 +87,7 @@
 		});
 		</script></pre>
 	</div>
-	<div class="Blue">
+	<div class="Box Blue">
 		<h2>Bundle (synchronous)</h2>
 		<pre><script type="text/javascript">
 		var mod1 = require('module1');
@@ -100,7 +100,7 @@
 		document.writeln(mod2.greet());
 		</script></pre>
 	</div>
-	<div class="Blue">
+	<div class="Box Blue">
 		<h2>Bundle (cached)</h2>
 		<pre><script type="text/javascript">
 		var mod1 = require('module1');
@@ -109,7 +109,7 @@
 		document.writeln(mod2.greet());
 		</script></pre>
 	</div>
-	<div class="Blue">
+	<div class="Box Blue">
 		<h2>Bundle (synchronous, relative)</h2>
 		<pre><script type="text/javascript">
 		require('relative/water');
