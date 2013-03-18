@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Smoothie Example: base/fixes/css.js</title>
+	<link rel="stylesheet" href="stylesheet.css" type="text/css" charset="utf-8">
+	<style type="text/css">
+		body {
+			background: #999;
+			color: #000;
+			margin: 0em;
+		}
+
+		div {
+			margin: 1em;
+			overflow: hidden;
+		}
+
+		p, pre {
+			margin: 1em;
+			overflow: auto;
+		}
+
+		h1 {
+			font-size: 2em;
+			margin: 0.5em;
+		}
+
+		.Red {
+			background: #fdd;
+		}
+		.Green {
+			background: #dfd;
+		}
+		.Blue {
+			background: #ddf;
+		}
+		.Yellow {
+			background: #ffd;
+		}
+
+		#Demo * {
+			font-family: 'calluna-regular';
+			font-weight: normal;
+		}
+	</style>
+	<script type="text/javascript">
+		var smoothie = {'requireRoot':'../../modules/'};
+	</script>
+	<script type="text/javascript" src="../../base/require.js"></script>
+	<script type="text/javascript">
+		window.onload = require('fixes/fontSmoothing').apply;
+	</script>
+</head>
+
+<body>
+	<div id="Demo" class="Red">
+		<h1>The quick brown fox jumps over the lazy dog</h1>
+		<p>abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</p>
+	</div>
+	<p>You should see a smooth text in Calluna type in the red box. If not you've found a bug ;)</p>
+</body>
+
+</html>
+
