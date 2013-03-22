@@ -84,9 +84,9 @@ catch(e) {
 
 // INFO Module loader
 // NOTE This functions is defined as an anonymous function, which is passed a
-//      a parameter to the closure above, to provide a clean environment (only
+//      a parameter to the closure above to provide a clean environment (only
 //      global variables, module and exports) for the loaded module. This is
-//      also the reason why 'source' is not a named parameter.
+//      also the reason why 'source', 'pwd' & 'cache' are not named parameters.
 })(function(module/*, cache, pwd, source*/) {
 	var exports = arguments[1][module.id] = new Object();
 	arguments[2].unshift(module.id.match(/(?:.*\/)?/)[0]);
