@@ -19,12 +19,13 @@
 // INFO CSS helper classes
 // TODO Move these into a separate module
 
-var CSSPrefix = window.webkitRequestAnimationFrame?'-webkit-':'';
+var cssPrefix = window.webkitRequestAnimationFrame?'-webkit-':'';
 
 var Vector2D = function(x, y) {
 	if (this.init && (this.init(arguments[0],arguments[1])||true)) return;
+	var proto = Vector2D.prototype;
 
-	Vector2D.prototype.init = function(x,y) {
+	proto.init = function(x,y) {
 		if (typeof x == 'object') {
 			this.x = x.x;
 			this.y = x.y;
@@ -35,21 +36,21 @@ var Vector2D = function(x, y) {
 		}
 	}
 
-	Vector2D.prototype.add = function(v) {
+	proto.add = function(v) {
 		return new Vector2D(
 			this.x + v.x,
 			this.y + v.y
 		);
 	}
 
-	Vector2D.prototype.sub = function(v) {
+	proto.sub = function(v) {
 		return new Vector2D(
 			this.x - v.x,
 			this.y - v.y
 		);
 	}
 
-	Vector2D.prototype.mul = function(v) {
+	proto.mul = function(v) {
 		if (v && v.x !== undefined)
 			return this.x*v.x + this.y*v.y;
 		else
@@ -59,7 +60,7 @@ var Vector2D = function(x, y) {
 			);
 	}
 
-	Vector2D.prototype.css = function() {
+	proto.css = function() {
 		if (window.opera !== undefined)
 			return 'matrix(1,0 0,1, '+this.x+','+this.y+')';
 		else
@@ -71,8 +72,9 @@ var Vector2D = function(x, y) {
 
 var Matrix2D = function() {
 	if (this.init && (this.init(arguments[0],arguments[1],arguments[2],arguments[3],arguments[4],arguments[5])||true)) return;
+	var proto = Matrix2D.prototype;
 	
-	Matrix2D.prototype.init = function(a1,b1, a2,b2, x,y) {
+	proto.init = function(a1,b1, a2,b2, x,y) {
 		if (typeof a1 == 'object') {
 			this.a1 = a1.a1; this.b1 = a1.b1;
 			this.a2 = a1.a2; this.b2 = a1.b2;
@@ -87,7 +89,7 @@ var Matrix2D = function() {
 		}
 	}
 
-	Matrix2D.prototype.mul = function(r) {
+	proto.mul = function(r) {
 		if (r && r.x !== undefined)
 			return new Vector2D(
 				this.a1*r.x + this.b1*r.y,
@@ -104,12 +106,12 @@ var Matrix2D = function() {
 			);
 	}
 
-	Matrix2D.prototype.det = function() {
+	proto.det = function() {
 		return   this.a1*this.b2*1 /*+ this.b1*this.y*0 + this.x*this.a2*0
 			   - this.x*this.b2*0*/ - this.b1*this.a2*1 /*- this.a1*this.y*0*/;
 	}
 
-	Matrix2D.prototype.invert = function() {
+	proto.invert = function() {
 		/*da1 = this.b2*1       - this.y*0;
 		db1 = this.x*0       - this.b1*1;
 		dx = this.b1*this.y - this.x*this.b2;
@@ -129,7 +131,7 @@ var Matrix2D = function() {
 		);
 	}
 
-	Matrix2D.prototype.css = function() {
+	proto.css = function() {
 		if (window.opera !== undefined)
 			return 'matrix('+this.a1+','+this.a2+','+this.b1+','+this.b2+','+this.x+','+this.y+')';
 		else
@@ -141,21 +143,24 @@ var Matrix2D = function() {
 
 // INFO Viewport class
 
-function Viewport(node) {
+function Viewport() {
 	if (this.init && (this.init(arguments[0])||true)) return;
-	
-	Viewport.prototype.init = function(node) {
-		var itr = require('iterators');
+	var proto =  Viewport.prototype;
 
-		var self = this;
+	var idCount = 0;
+	
+	proto.init = function(node) {
+		this.id = idCount;
+		idCount++;
 		this.node = node;
 		this.spreader = this.node.getElementsByClassName('Spreader')[0];
 		this.frame = this.node.getElementsByClassName('Frame')[0];
-		this.views = itr.createLiveListIterator(this.frame.getElementsByClassName('View'), function(item) {
-			return (item.parentNode == self.frame);
-		});
+		this.views = this.frame.children;
+		this.current = this.views[0];
+		this.current.className = 'View active';
 
-		this.animation = Viewport.prototype.styleSheet.cssRules[0];
+		proto.styleSheet.insertRule('@'+cssPrefix+'keyframes ViewportAnimation'+this.id+' {}', 0);
+		this.animation = proto.styleSheet.cssRules[0];
 		if (!this.animation.appendRule && this.animation.insertRule)
 			this.animation.appendRule = this.animation.insertRule;
 	}
@@ -164,17 +169,40 @@ function Viewport(node) {
 	//      clean and seems to fix a bug in Opera, which only
 	//      applies a CSSKeyframesRule if this is part of a
 	//      CSSStyleSheet, which has been created dynamically. 
-	Viewport.prototype.styleSheet = document.head.insertBefore(document.createElement('STYLE'), document.head.firstChild).sheet;
-	Viewport.prototype.styleSheet.insertRule('@'+CSSPrefix+'keyframes ViewportAnimation {}', 0);
+	proto.styleSheet = document.head.insertBefore(document.createElement('STYLE'), document.head.firstChild).sheet;
 
-	Viewport.prototype.transite = function(mode, transform) {
-		var viewFrom = this.views.item(0);
-		var viewTo = this.views.item(1);
+	proto.blend = function(viewFrom, viewTo, transition, callback) {
+		var self = this;
 		var transformFrom = new Matrix2D();
-		var transformTo = new Matrix2D(transform); // clone matrix
+		var transformTo = new Matrix2D(transition.start); // clone matrix
 		var offsetFrom = new Matrix2D();
 		var offsetTo = transformTo.invert();
 
+		function animationEnd() {
+			function cleanup() {
+					viewTo.style[cssPrefix+'transform'] = '';
+					self.spreader.style['height'] = '';
+					self.spreader.style['width'] = '';
+					self.frame.style['position'] = '';
+					self.frame.style['height'] = '';
+					self.frame.style['width'] = '';
+					self.frame.style[cssPrefix+'animation-name'] = '';
+					self.node.classList.remove('animated');
+					callback();
+			}
+		
+			if (self.node == document.body) {
+				window.scrollTo(scrollTo.left, scrollTo.top);
+				setTimeout(cleanup, 0);
+			}
+			else {
+				cleanup();
+			}
+			
+			self.frame.removeEventListener('animationend', animationEnd, false);
+			self.frame.removeEventListener('webkitAnimationEnd', animationEnd, false);
+			self.frame.removeEventListener('oAnimationEnd', animationEnd, false);
+		}
 
 		this.frame.style['height'] = this.frame.offsetHeight+'px';
 		this.frame.style['width'] = this.frame.offsetWidth+'px';
@@ -196,11 +224,9 @@ function Viewport(node) {
 			this.node.scrollTop = 0;
 		}
 		var scrollTo = scrollFrom;
-		
 
-		// INFO Position views relative to body center
-
-		switch(mode) {
+		// INFO Position views relative to frame center
+		switch(transition.mode) {
 			case 'from-left':
 				transformFrom.x += 0.5*this.frame.offsetWidth;
 				transformFrom.y -= 0.5*(viewFrom.offsetHeight - this.frame.offsetHeight);
@@ -226,16 +252,13 @@ function Viewport(node) {
 				transformTo.y += 0.5*this.frame.offsetHeight;
 				break;
 		}
-		//alert(JSON.stringify(document.body.scrollTop));
 
-		// INFO Calculate body transforms
-
-		// NOTE Scrolling doesn't need to be applied as long as port has no
-		//      position:fixed propery.
+		// INFO Calculate frame transforms
+		// NOTE Add scrolling and use inverted corner coords as offset
 		offsetFrom.x = -(transformFrom.x + scrollFrom.left);
 		offsetFrom.y = -(transformFrom.y + scrollFrom.top);
-
-		// NOTE Center of body
+		//var offsetFrom = transformFrom.add(scrollFrom).invert();
+		// NOTE Center of frame
 		var cb = new Vector2D(0.5*this.frame.offsetWidth, 0.5*this.frame.offsetHeight);
 		// NOTE Center of viewFrom
 		var cv = new Vector2D(0.5*viewTo.offsetWidth, 0.5*viewTo.offsetHeight);
@@ -243,74 +266,68 @@ function Viewport(node) {
 		var l0 = cv.mul(-1);
 		// NOTE apply viewFrom rotation
 		var l1 = transformTo.mul(l0);
-		// NOTE conversion from viewFrom to body coords
+		// NOTE conversion from viewFrom to frame coords
 		var g0 = l1.add(cv.sub(cb)).add(transformTo);
-		// NOTE Apply body rotation
+		// NOTE Apply frame rotation
 		var g1 = offsetTo.mul(g0);
-		// NOTE Use inverted top-left corner coords as offset
+		// NOTE Add scrolling and use inverted corner coords as offset
 		offsetTo.x = -(g1.x + cb.x + scrollTo.left);
 		offsetTo.y = -(g1.y + cb.y + scrollTo.top);
+		//var offsetTo = g1.add(cb).add(scrollTo).invert();
 
 		this.animation.deleteRule('0%');
 		this.animation.deleteRule('100%');
-		this.animation.appendRule('0% {'+CSSPrefix+'transform: '+offsetFrom.css()+';}');
-		this.animation.appendRule('100% {'+CSSPrefix+'transform:'+offsetTo.css()+';}');
+		this.animation.appendRule('0% {'+cssPrefix+'transform: '+offsetFrom.css()+';}');
+		this.animation.appendRule('100% {'+cssPrefix+'transform:'+offsetTo.css()+';}');
 		console.log(this.animation.cssText);
 
-		viewFrom.style[CSSPrefix+'transform'] = transformFrom.css();
-		viewTo.style[CSSPrefix+'transform'] = transformTo.css();
-		this.node.className += ' animated';
-
-		var self = this;
-		function animationEnd() {
-			console.log('ani end');
-			viewFrom.parentNode.removeChild(viewFrom);
+		viewFrom.style[cssPrefix+'transform'] = transformFrom.css();
+		viewTo.style[cssPrefix+'transform'] = transformTo.css();
+		this.frame.style[cssPrefix+'animation-name'] = 'ViewportAnimation'+this.id;
+		this.node.classList.add('animated');
 		
-			if (self.node == document.body) {
-				window.scrollTo(scrollTo.left, scrollTo.top);
-				setTimeout(function() {
-					viewTo.style[CSSPrefix+'transform'] = '';
-					self.spreader.style['height'] = '';
-					self.spreader.style['width'] = '';
-					self.frame.style['position'] = '';
-					self.frame.style['height'] = '';
-					self.frame.style['width'] = '';
-					self.node.className = 'Viewport';
-				}, 0);
-			}
-			else {
-				self.node.scrollLeft = scrollTo.left;
-				self.node.scrollTop = scrollTo.top;
-				viewTo.style[CSSPrefix+'transform'] = '';
-				self.spreader.style['height'] = '';
-				self.spreader.style['width'] = '';
-				self.frame.style['height'] = '';
-				self.frame.style['width'] = '';
-				self.node.className = 'Box Green Viewport';
-			}
-			
-			self.frame.removeEventListener('animationend', animationEnd, false);
-			self.frame.removeEventListener('webkitAnimationEnd', animationEnd, false);
-			self.frame.removeEventListener('oAnimationEnd', animationEnd, false);
-		}
 		this.frame.addEventListener('animationend', animationEnd, false);
 		this.frame.addEventListener('webkitAnimationEnd', animationEnd, false);
 		this.frame.addEventListener('oAnimationEnd', animationEnd, false);
 	}
 
-	Viewport.prototype.add = function(view) {
-		this.views.item(0).parentNode.appendChild(view);
+	proto.show = function(view, transition) {
+		var self = this;
+
+		function cleanup() {
+			var evt = document.createEvent('Event');
+			evt.initEvent('viewchange', true, true);
+			evt.lastView = self.current;
+			evt.currentView = view;
+			self.current.classList.remove('active');
+			self.current = view;
+			self.node.dispatchEvent(evt);
+		}
+
+		self.current.classList.add('active');
+		if (transition)
+			this.blend(this.current, view, transition, cleanup);
+		else
+			cleanup();
 	}
 
-	this.init(node);
+	proto.next = function(transition) {
+		var view = this.current.nextElementSibling;
+		if (!view)
+			view = this.frame.firstElementChild;
+		this.show(view, transition);
+	}
+
+	proto.prev = function(transition) {
+		var view = this.current.previousElementSibling;
+		if (!view)
+			view = this.frame.lastElementChild;
+		this.show(view, transition);
+	}
+
+	this.init(arguments[0]);
 }
 
-exports.createVector2D = function(x, y) {
-	return new Viewport(x, y);
-}
-exports.createMatrix2D = function(a1,b1, a2,b2, x,y) {
-	return new Matrix2D(a1,b1, a2,b2, x,y);
-}
-exports.createViewport = function(node) {
-	return new Viewport(node);
-}
+exports.Vector2D = Vector2D;
+exports.Matrix2D = Matrix2D;
+exports.Viewport = Viewport;

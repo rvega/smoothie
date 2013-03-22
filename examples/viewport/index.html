@@ -36,6 +36,7 @@
 			left: 0%;
 		}
 		.Viewport> .Frame> .View {
+			display: none;
 			overflow: hidden;
 			position: absolute;
 			min-width: 100%;
@@ -46,12 +47,16 @@
 			backface-visibiliy: hidden;
 			-webkit-backface-visibiliy: hidden;
 		}
+		.Viewport> .Frame> .View.active {
+			display: block;
+		}
+
 		.Viewport.animated {
-			overflow: hidden;
+			overflow: hidden !important;
 		}
 		.Viewport.animated> .Frame {
-			animation: ViewportAnimation 1s;
-			-webkit-animation: ViewportAnimation 1s;
+			animation-duration: 1s;
+			-webkit-animation-duration: 1s;
 			/* NOTE Prevents stop-flicker in Opera */
 			animation-fill-mode: both;
 			-webkit-animation-fill-mode: both;
@@ -71,24 +76,23 @@
 	<script type="text/javascript" src="../../base/require.js"></script>
 	<script type="text/javascript">
 		var vp = require('widgets/viewport');
-		var viewports = document.getElementsByClassName('Viewport');
-
-		var bodyTransform = vp.createMatrix2D();
-		//var transform = vp.createMatrix2D(0,-1, 1,0, 0,0);
-		//var transform = vp.createMatrix2D(-1,0, 0,-1, 0,0);
-		//var transform = vp.createMatrix2D(0,1, -1,0, 0,0);
-		//var transform = vp.createMatrix2D(0.766,-0.643, 0.643,0.766, -750,-1250);
-
-		//var transform = vp.createMatrix2D(0.5,0, 0,0.5, 0,0);
-		//var transform = vp.createMatrix2D(2,0, 0,2, 0,0);
-		//var transform = vp.createMatrix2D(3,0, 0,0.2, -750,-1250);
-
-		//var transform = vp.createMatrix2D(0.433013,-0.25, 0.25,0.433013, 0,0);
-		//var transform = vp.createMatrix2D(1.73205,-1, 1,1.73205, 0,0);
-		var blockTransform = vp.createMatrix2D(0.433013,-1, 0.25,1.73205, -750,-1250);
 
 		var bodyViewport = null;
 		var blockViewport = null;
+		var bodyTransform = new vp.Matrix2D();
+		var blockTransform = new vp.Matrix2D(-1,0, 0,-1, 0,0);
+		// NOTE Some transformation matrices:
+		//      var transform = new vp.Matrix2D();
+		//      var transform = new vp.Matrix2D(0,-1, 1,0, 0,0);
+		//      var transform = new vp.Matrix2D(-1,0, 0,-1, 0,0);
+		//      var transform = new vp.Matrix2D(0,1, -1,0, 0,0);
+		//      var transform = new vp.Matrix2D(0.766,-0.643, 0.643,0.766, -750,-1250);
+		//      var transform = new vp.Matrix2D(0.5,0, 0,0.5, 0,0);
+		//      var transform = new vp.Matrix2D(2,0, 0,2, 0,0);
+		//      var transform = new vp.Matrix2D(3,0, 0,0.2, -750,-1250);
+		//      var transform = new vp.Matrix2D(0.433013,-0.25, 0.25,0.433013, 0,0);
+		//      var transform = new vp.Matrix2D(1.73205,-1, 1,1.73205, 0,0);
+		//      var transform = new vp.Matrix2D(0.433013,-1, 0.25,1.73205, -750,-1250);
 		
 		function transiteBodyLeft() { transite(bodyViewport, 'from-left', bodyTransform);}
 		function transiteBodyRight() { transite(bodyViewport, 'from-right', bodyTransform); }
@@ -99,27 +103,28 @@
 		function transiteBlockTop() { transite(blockViewport, 'from-top', blockTransform); }
 		function transiteBlockBottom() { transite(blockViewport, 'from-bottom', blockTransform); }
 
-		function transite(viewport, mode, transform) {
-			viewport.add(viewport.views.item(0).cloneNode(true));
-			viewport.transite(mode, transform);
-
-			if (viewport.node == bodyViewport.node) {
-				function reinit() {
-					console.log('reinit');
-					blockViewport.init(viewport.views.item(0).getElementsByClassName('Viewport')[0]);
-					viewport.frame.removeEventListener('animationend', reinit, false);
-					viewport.frame.removeEventListener('webkitAnimationEnd', reinit, false);
-					viewport.frame.removeEventListener('oAnimationEnd', reinit, false);
-				}
-				viewport.frame.addEventListener('animationend', reinit, false);
-				viewport.frame.addEventListener('webkitAnimationEnd', reinit, false);
-				viewport.frame.addEventListener('oAnimationEnd', reinit, false);
+		function transite(viewport, mode, start) {
+			var transition = {
+				'mode':mode,
+				'start':start
 			}
+
+			viewport.views[0].parentNode.appendChild(viewport.views[0].cloneNode(true));
+			viewport.next(transition);
+
+			function reinit(evt) {
+				evt.lastView.parentNode.removeChild(evt.lastView);
+				if (viewport.node == bodyViewport.node)
+					blockViewport.init(viewport.views[0].getElementsByClassName('Viewport')[0]);
+				viewport.node.removeEventListener('viewchange', reinit, false);
+			}
+			viewport.node.addEventListener('viewchange', reinit, false);
 		}
 
 		window.onload = function() {
-			bodyViewport = vp.createViewport(viewports[0]);
-			blockViewport = vp.createViewport(viewports[1]);
+			var viewports = document.getElementsByClassName('Viewport');
+			bodyViewport = new vp.Viewport(viewports[0]);
+			blockViewport = new vp.Viewport(viewports[1]);
 		}
 	</script>
 </head>
