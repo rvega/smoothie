@@ -71,62 +71,9 @@
 			text-align: center;
 		}
 	</style>
-	<script type="text/javascript">var smoothie = {'requireRoot':'../../modules/'};</script>
-	<!-- <script type="text/javascript" src="../../base/zen.js"></script> -->
+	<script type="text/javascript">var smoothie = {'requirePaths':['./','../../modules/']};</script>
 	<script type="text/javascript" src="../../base/require.js"></script>
-	<script type="text/javascript">
-		var vp = require('widgets/viewport');
-
-		var bodyViewport = null;
-		var blockViewport = null;
-		var bodyTransform = new vp.Matrix2D();
-		var blockTransform = new vp.Matrix2D(-1,0, 0,-1, 0,0);
-		// NOTE Some transformation matrices:
-		//      var transform = new vp.Matrix2D();
-		//      var transform = new vp.Matrix2D(0,-1, 1,0, 0,0);
-		//      var transform = new vp.Matrix2D(-1,0, 0,-1, 0,0);
-		//      var transform = new vp.Matrix2D(0,1, -1,0, 0,0);
-		//      var transform = new vp.Matrix2D(0.766,-0.643, 0.643,0.766, -750,-1250);
-		//      var transform = new vp.Matrix2D(0.5,0, 0,0.5, 0,0);
-		//      var transform = new vp.Matrix2D(2,0, 0,2, 0,0);
-		//      var transform = new vp.Matrix2D(3,0, 0,0.2, -750,-1250);
-		//      var transform = new vp.Matrix2D(0.433013,-0.25, 0.25,0.433013, 0,0);
-		//      var transform = new vp.Matrix2D(1.73205,-1, 1,1.73205, 0,0);
-		//      var transform = new vp.Matrix2D(0.433013,-1, 0.25,1.73205, -750,-1250);
-		
-		function transiteBodyLeft() { transite(bodyViewport, 'from-left', bodyTransform);}
-		function transiteBodyRight() { transite(bodyViewport, 'from-right', bodyTransform); }
-		function transiteBodyTop() { transite(bodyViewport, 'from-top', bodyTransform); }
-		function transiteBodyBottom() { transite(bodyViewport, 'from-bottom', bodyTransform); }
-		function transiteBlockLeft() { transite(blockViewport, 'from-left', blockTransform);}
-		function transiteBlockRight() { transite(blockViewport, 'from-right', blockTransform); }
-		function transiteBlockTop() { transite(blockViewport, 'from-top', blockTransform); }
-		function transiteBlockBottom() { transite(blockViewport, 'from-bottom', blockTransform); }
-
-		function transite(viewport, mode, start) {
-			var transition = {
-				'mode':mode,
-				'start':start
-			}
-
-			viewport.views[0].parentNode.appendChild(viewport.views[0].cloneNode(true));
-			viewport.next(transition);
-
-			function reinit(evt) {
-				evt.lastView.parentNode.removeChild(evt.lastView);
-				if (viewport.node == bodyViewport.node)
-					blockViewport.init(viewport.views[0].getElementsByClassName('Viewport')[0]);
-				viewport.node.removeEventListener('viewchange', reinit, false);
-			}
-			viewport.node.addEventListener('viewchange', reinit, false);
-		}
-
-		window.onload = function() {
-			var viewports = document.getElementsByClassName('Viewport');
-			bodyViewport = new vp.Viewport(viewports[0]);
-			blockViewport = new vp.Viewport(viewports[1]);
-		}
-	</script>
+	<script type="text/javascript" src="../../base/loader.js"></script>
 </head>
 
 <body class="Viewport">
@@ -135,8 +82,8 @@
 		<li class="View Body">
 			<h1>Smoothie Example for widgets/viewport module</h1>
 			<div class="Box Red">
-				<p><button onclick="transiteBodyLeft();">from-left</button><button onclick="transiteBodyRight();">from-right</button></p>
-				<p><button onclick="transiteBodyTop();">from-top</button><button onclick="transiteBodyBottom();">from-bottom</button></p>
+				<p><button id="BodyLeft">from-left</button><button id="BodyRight">from-right</button></p>
+				<p><button id="BodyTop">from-top</button><button id="BodyBottom">from-bottom</button></p>
 			</div>
 			<div class="Box Blue">
 				<h2>Just a bit lorem ipsum to have some content</h2>
@@ -148,8 +95,8 @@
 				<ul class="Frame">
 					<li class="View">
 						<div class="Box Red">
-							<p><button onclick="transiteBlockLeft();">from-left</button><button onclick="transiteBlockRight();">from-right</button></p>
-							<p><button onclick="transiteBlockTop();">from-top</button><button onclick="transiteBlockBottom();">from-bottom</button></p>
+							<p><button id="BlockLeft">from-left</button><button id="BlockRight">from-right</button></p>
+							<p><button id="BlockTop">from-top</button><button id="BlockBottom">from-bottom</button></p>
 						</div>
 						<div class="Box Blue">
 							<h2>And some more lorem ipsum content</h2>
