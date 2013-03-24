@@ -19,8 +19,8 @@
 //      the file to see the function definition.
 (function(load) { 'use strict';
 
-// INFO Module root
-var root = window.smoothie&&window.smoothie.requireRoot?window.smoothie.requireRoot:location.pathname;
+// INFO Module paths
+var paths = window.smoothie&&window.smoothie.requirePaths?window.smoothie.requirePaths.slice(0):['./'];
 // INFO Module path (0 = current)
 var pwd = Array('');
 // INFO Module cache
@@ -60,11 +60,11 @@ function require(identifier, callback) {
 }
 
 function resolve(identifier) {
-	var m = identifier.match(/^(\.\.?)?\/?((?:.*\/)?)([^\.]+)?(\..*)?$/);
-	parser.href = '/'+((m[1]?pwd[0]+m[1]+'/':'')+m[2])+(m[3]?m[3]:'index');
+	var m = identifier.match(/^(?:([^:\/]+):)?(\.\.?)?\/?((?:.*\/)?)([^\.]+)?(\..*)?$/);
+	parser.href = '/'+((m[2]?pwd[0]+m[2]+'/':'')+m[3])+(m[4]?m[4]:'index');
 	return {
 		'id': parser.href.replace(/^[^:]*:\/\/[^\/]*\/|\/(?=\/)/g, ''),
-		'uri': root+parser.href.replace(/^[^:]*:\/\/[^\/]*\//, '')+(m[4]?m[4]:'.js')
+		'uri': paths[m[1]?+m[1]:0]+parser.href.replace(/^[^:]*:\/\/[^\/]*\//, '')+(m[5]?m[5]:'.js')
 	};
 }
 
@@ -75,6 +75,7 @@ if (window.require !== undefined)
 //      have to use the unsave method as fallback in these cases.
 try {
 	Object.defineProperty(require, 'resolve', {'value':resolve,'writable':false,'configurable':false});
+	Object.defineProperty(require, 'paths', {'get':function(){return paths.slice(0);},'configurable':false});
 	Object.defineProperty(window, 'require', {'value':require,'writable':false,'configurable':false});
 }
 catch(e) {
