@@ -17,7 +17,7 @@
 'use strict';
 
 // INFO CSS helper classes
-// TODO Move these into a separate module
+// TODO Get rid of these or move them into a separate module
 
 var cssPrefix = window.webkitRequestAnimationFrame?'-webkit-':'';
 
@@ -204,6 +204,8 @@ function Viewport() {
 				setTimeout(cleanup, 0);
 			}
 			else {
+				self.node.scrollLeft = scrollTo.left;
+				self.node.scrollTop = scrollTo.top;
 				cleanup();
 			}
 			
