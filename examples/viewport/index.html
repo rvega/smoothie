@@ -16,52 +16,6 @@
 			height: 100%;
 		}
 
-		.Viewport,
-		.Viewport> .Spreader,
-		.Viewport> .Frame,
-		.Viewport> .Frame> .View {
-			margin: 0em;
-			padding: 0em;
-		}
- 
-		.Viewport {
-			position: relative;
-		}
-		.Viewport> .Spreader,
-		.Viewport> .Frame {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			top: 0%;
-			left: 0%;
-		}
-		.Viewport> .Frame> .View {
-			display: none;
-			overflow: hidden;
-			position: absolute;
-			min-width: 100%;
-			min-height: 100%;
-			top: 0%;
-			left: 0%;
-			/* NOTE Prevents start-flicker in iOS */
-			backface-visibiliy: hidden;
-			-webkit-backface-visibiliy: hidden;
-		}
-		.Viewport> .Frame> .View.active {
-			display: block;
-		}
-
-		.Viewport.animated {
-			overflow: hidden !important;
-		}
-		.Viewport.animated> .Frame {
-			animation-duration: 1s;
-			-webkit-animation-duration: 1s;
-			/* NOTE Prevents stop-flicker in Opera */
-			animation-fill-mode: both;
-			-webkit-animation-fill-mode: both;
-		}
-
 		div.Box.Viewport {
 			overflow: auto;
 			height: 20em;
@@ -71,6 +25,7 @@
 			text-align: center;
 		}
 	</style>
+
 	<script type="text/javascript">var smoothie = {'requirePaths':['./','../../modules/']};</script>
 	<script type="text/javascript" src="../../base/require.js"></script>
 	<script type="text/javascript" src="../../base/loader.js"></script>

@@ -143,6 +143,14 @@ var Matrix2D = function() {
 
 // INFO Viewport class
 
+// NOTE Also include the CSS, which belogns to this module
+var link = document.createElement('LINK');
+link.type = 'text/css';
+link.rel = 'stylesheet';
+link.charset = 'utf-8';
+link.href = '../../modules/widgets/viewport.css';
+document.head.insertBefore(link, document.head.firstChild);
+
 function Viewport() {
 	if (this.init && (this.init(arguments[0])||true)) return;
 	var proto =  Viewport.prototype;
