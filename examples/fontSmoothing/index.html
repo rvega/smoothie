@@ -35,11 +35,11 @@
 		}
 	</style>
 
-	<script type="text/javascript">var smoothie = {'requireRoot':'../../modules/'};</script>
+	<script type="text/javascript">var smoothie = {'requireRoot':{'smoothieModules':'../../modules/'}};</script>
 	<script type="text/javascript" src="../../base/require.js"></script>
 	<script type="text/javascript">
 		window.onload = function() {
-			require('fixes/fontSmoothing').apply();
+			require('smoothieModules:fixes/fontSmoothing').apply();
 		}
 	</script>
 </head>

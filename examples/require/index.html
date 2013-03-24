@@ -8,12 +8,22 @@
 	<title>Smoothie Example for require() functionality</title>
 	
 	<link rel="stylesheet" href="../example.css" type="text/css" charset="utf-8">
-	
+
+	<script type="text/javascript">var smoothie = {'requirePaths':['./','/just/some/dummy/path/']};</script>
 	<script type="text/javascript" src="../../base/require.js"></script>
 </head>
 
 <body>
 	<h1>Smoothie Example for require() functionality</h1>
+	<div class="Box Red">
+		<h2>Module paths</h2>
+		<pre><script type="text/javascript">
+		smoothie.requirePaths.push('/evil/hack/path/');
+		document.writeln(require.paths);
+		require.paths.push('/yet/another/evil/hack/');
+		document.writeln(require.paths+' (must be the same as above)');
+		</script></pre>
+	</div>
 	<div class="Box Red">
 		<h2>Identifier => Module</h2>
 		<pre><script type="text/javascript">
