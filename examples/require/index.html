@@ -47,7 +47,9 @@
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		mname = 'foo/bar//baz///moo////maa/mee';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
-		mname = '/home/torben/PixelsVsBytes/Repositories///Jay/../../..';
+		mname = '/home/torben/PixelsVsBytes/Repositories///Jay/../../../';
+		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
+		mname = '1:/home/torben/PixelsVsBytes/Repositories///Jay/../../../';
 		document.writeln('require.resolve('+mname+') -> '+JSON.stringify(require.resolve(mname)));
 		</script></pre>
 	</div>
