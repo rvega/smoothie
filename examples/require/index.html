@@ -53,9 +53,18 @@
 	</div>
 	<div class="Box Green">
 		<h2>Module (asynchronous)</h2>
-		<pre id="asyncModulePre"><script type="text/javascript">
+		<pre id="asyncModulePre1"><script type="text/javascript">
+		require('./async.js', function(mod) {
+			var node = document.getElementById('asyncModulePre1');
+			node.innerHTML += mod.greet()+'\n';
+		});
+		</script></pre>
+	</div>
+	<div class="Box Green">
+		<h2>Module (asynchronous, cached)</h2>
+		<pre id="asyncModulePre2"><script type="text/javascript">
 		require('./module.js', function(mod) {
-			var node = document.getElementById('asyncModulePre');
+			var node = document.getElementById('asyncModulePre2');
 			node.innerHTML += mod.greet()+'\n';
 		});
 		</script></pre>

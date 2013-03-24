@@ -53,9 +53,7 @@ function require(identifier, callback) {
 		if (!cache[module.id]) { 
 			load(module, cache, pwd, 'function(){\n'+request.responseText+'\n}');
 		}
-		else {
-			callback && callback(cache[module.id]);
-		}
+		callback && callback(cache[module.id]);
 	}
 }
 
