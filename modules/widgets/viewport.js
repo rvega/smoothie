@@ -148,7 +148,7 @@ var link = document.createElement('LINK');
 link.type = 'text/css';
 link.rel = 'stylesheet';
 link.charset = 'utf-8';
-link.href = '../../modules/widgets/viewport.css';
+link.href = module.uri.replace(/\.js$/, '.css');
 document.head.insertBefore(link, document.head.firstChild);
 
 function Viewport() {
