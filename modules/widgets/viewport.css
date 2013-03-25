@@ -37,6 +37,8 @@
 	overflow: hidden !important;
 }
 .Viewport.animated> .Frame {
+	animation-name: ViewportAnimation;
+	-webkit-animation-name: ViewportAnimation;
 	animation-duration: 1s;
 	-webkit-animation-duration: 1s;
 	/* NOTE Prevents stop-flicker in Opera */

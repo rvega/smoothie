@@ -155,22 +155,13 @@ function Viewport() {
 	if (this.init && (this.init(arguments[0])||true)) return;
 	var proto =  Viewport.prototype;
 
-	var idCount = 0;
-	
 	proto.init = function(node) {
-		this.id = idCount;
-		idCount++;
 		this.node = node;
 		this.spreader = this.node.getElementsByClassName('Spreader')[0];
 		this.frame = this.node.getElementsByClassName('Frame')[0];
 		this.views = this.frame.children;
 		this.current = this.views[0];
 		this.current.className = 'View active';
-
-		proto.styleSheet.insertRule('@'+cssPrefix+'keyframes ViewportAnimation'+this.id+' {}', 0);
-		this.animation = proto.styleSheet.cssRules[0];
-		if (!this.animation.appendRule && this.animation.insertRule)
-			this.animation.appendRule = this.animation.insertRule;
 	}
 
 	// NOTE Using an own styleSheet object keeps the global scope
@@ -178,6 +169,10 @@ function Viewport() {
 	//      applies a CSSKeyframesRule if this is part of a
 	//      CSSStyleSheet, which has been created dynamically. 
 	proto.styleSheet = document.head.insertBefore(document.createElement('STYLE'), document.head.firstChild).sheet;
+	proto.styleSheet.insertRule('@'+cssPrefix+'keyframes ViewportAnimation {}', 0);
+	proto.animation = proto.styleSheet.cssRules[0];
+	if (!proto.animation.appendRule && proto.animation.insertRule)
+		proto.animation.appendRule = proto.animation.insertRule;
 
 	proto.blend = function(viewFrom, viewTo, transition, callback) {
 		var self = this;
@@ -194,7 +189,7 @@ function Viewport() {
 					self.frame.style['position'] = '';
 					self.frame.style['height'] = '';
 					self.frame.style['width'] = '';
-					self.frame.style[cssPrefix+'animation-name'] = '';
+					// self.frame.style[cssPrefix+'animationName'] = '';
 					self.node.classList.remove('animated');
 					callback();
 			}
@@ -289,11 +284,11 @@ function Viewport() {
 		this.animation.deleteRule('100%');
 		this.animation.appendRule('0% {'+cssPrefix+'transform: '+offsetFrom.css()+';}');
 		this.animation.appendRule('100% {'+cssPrefix+'transform:'+offsetTo.css()+';}');
-		console.log(this.animation.cssText);
 
 		viewFrom.style[cssPrefix+'transform'] = transformFrom.css();
 		viewTo.style[cssPrefix+'transform'] = transformTo.css();
-		this.frame.style[cssPrefix+'animation-name'] = 'ViewportAnimation'+this.id;
+		// this.frame.style[cssPrefix+'animationName'] = 'ViewportAnimation'+this.id;
+		console.log(this.frame.style[cssPrefix+'animationName']);
 		this.node.classList.add('animated');
 		
 		this.frame.addEventListener('animationend', animationEnd, false);
