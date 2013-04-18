@@ -143,14 +143,6 @@ var Matrix2D = function() {
 
 // INFO Viewport class
 
-// NOTE Also include the CSS, which belogns to this module
-var link = document.createElement('LINK');
-link.type = 'text/css';
-link.rel = 'stylesheet';
-link.charset = 'utf-8';
-link.href = module.uri.replace(/\.js$/, '.css');
-document.head.insertBefore(link, document.head.firstChild);
-
 function Viewport() {
 	if (this.init && (this.init(arguments[0])||true)) return;
 	var proto =  Viewport.prototype;
@@ -169,10 +161,13 @@ function Viewport() {
 	//      applies a CSSKeyframesRule if this is part of a
 	//      CSSStyleSheet, which has been created dynamically. 
 	proto.styleSheet = document.head.insertBefore(document.createElement('STYLE'), document.head.firstChild).sheet;
-	proto.styleSheet.insertRule('@'+cssPrefix+'keyframes ViewportAnimation {}', 0);
-	proto.animation = proto.styleSheet.cssRules[0];
-	if (!proto.animation.appendRule && proto.animation.insertRule)
-		proto.animation.appendRule = proto.animation.insertRule;
+	try {
+		proto.styleSheet.insertRule('@'+cssPrefix+'keyframes ViewportAnimation {}', 0);
+		proto.animation = proto.styleSheet.cssRules[0];
+	}
+	catch (e) {
+		console.log('Smoothie viewport: animations disabled');
+	}
 
 	proto.blend = function(viewFrom, viewTo, transition, callback) {
 		var self = this;
@@ -287,8 +282,6 @@ function Viewport() {
 
 		viewFrom.style[cssPrefix+'transform'] = transformFrom.css();
 		viewTo.style[cssPrefix+'transform'] = transformTo.css();
-		// this.frame.style[cssPrefix+'animationName'] = 'ViewportAnimation'+this.id;
-		console.log(this.frame.style[cssPrefix+'animationName']);
 		this.node.classList.add('animated');
 		
 		this.frame.addEventListener('animationend', animationEnd, false);
@@ -309,8 +302,8 @@ function Viewport() {
 			self.node.dispatchEvent(evt);
 		}
 
-		self.current.classList.add('active');
-		if (transition)
+		this.current.classList.add('active');
+		if (this.animation && transition)
 			this.blend(this.current, view, transition, cleanup);
 		else
 			cleanup();

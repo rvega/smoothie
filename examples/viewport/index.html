@@ -9,6 +9,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<title>Smoothie Example for widgets/viewport module</title>
 
+	<link rel="stylesheet" href="../../modules/widgets/viewport.css" type="text/css" charset="utf-8">
 	<link rel="stylesheet" href="../example.css" type="text/css" charset="utf-8">
 	<style type="text/css">
 		html, body.Viewport {
@@ -27,6 +28,7 @@
 	</style>
 
 	<script type="text/javascript">var smoothie = {'requirePaths':['./','../../modules/']};</script>
+	<script type="text/javascript" src="../../base/normalize.js"></script>
 	<script type="text/javascript" src="../../base/require.js"></script>
 	<script type="text/javascript" src="../../base/loader.js"></script>
 </head>
@@ -34,7 +36,7 @@
 <body class="Viewport">
 	<div class="Spreader"></div>
 	<ul class="Frame">
-		<li class="View Body">
+		<li class="View Body active">
 			<h1>Smoothie Example for widgets/viewport module</h1>
 			<div class="Box Red">
 				<p><button id="BodyLeft">from-left</button><button id="BodyRight">from-right</button></p>
@@ -48,7 +50,7 @@
 			<div class="Box Green Viewport">
 				<div class="Spreader"></div>
 				<ul class="Frame">
-					<li class="View">
+					<li class="View active">
 						<div class="Box Red">
 							<p><button id="BlockLeft">from-left</button><button id="BlockRight">from-right</button></p>
 							<p><button id="BlockTop">from-top</button><button id="BlockBottom">from-bottom</button></p>
