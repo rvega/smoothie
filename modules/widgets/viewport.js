@@ -153,7 +153,7 @@ function Viewport() {
 		this.frame = this.node.getElementsByClassName('Frame')[0];
 		this.views = this.frame.children;
 		this.current = this.views[0];
-		this.current.className = 'View active';
+		this.current.classList.add('active');
 	}
 
 	// NOTE Using an own styleSheet object keeps the global scope

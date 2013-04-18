@@ -37,8 +37,10 @@ test(function() {
 			throw 'Smoothie normalize exception: TODO DOMTokenList.contains';
 		}		
 		proto.add = function(token) {
-			var rx = new RegExp('(?:^|\\s)\\s*'+token+'\\s*(?:$|\\s)');
+			var rx = new RegExp('(?:(?:^|\\s)\\s*'+token+'\\s*(?:$|\\s)|\\s*$)');
+			console.log(this.$node[this.$list]);
 			this.$node[this.$list] = this.$node[this.$list].replace(rx, ' '+token+' ');
+			console.log(this.$node[this.$list]);
 		}		
 		proto.remove = function(token) {
 			var rx = new RegExp('(?:^|\\s)\\s*'+token+'\\s*(?:$|\\s)');
