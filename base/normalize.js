@@ -10,13 +10,51 @@ function test(code, fix) {
 			code();
 		}
 		catch (e) {
-			throw 'Smoothie normalize exception: unable to fix: '+e;
+			console.log('Smoothie normalize exception: unable to fix: '+e);
 		}
 	}
 
 }
 
-// INFO DOMTokenList (fixes Element.classList etc)
+// INFO Event handling for IE8
+
+if (!window.addEventListener && window.attachEvent) {
+	document.createEvent = function(type) {
+		return document.createEventObject();
+	}
+
+	Event.prototype.initEvent = function(name, bubbles, cancelable) {
+		this.expando = name;
+		this.cancelBubble = bubbles;
+	}
+	
+	window.dispatchEvent = Element.prototype.dispatchEvent = function(evt) {
+		try {
+			this.fireEvent('on'+evt.expando);
+		}
+		catch (e) {
+			if (this.listeners && this.listeners[evt.expando]) {
+				this.attachEvent('onclick', this.listeners[evt.expando]);
+				this.fireEvent('onclick');
+				this.detachEvent('onclick', this.listeners[evt.expando]);
+			}
+		}
+	}
+
+	window.addEventListener = Element.prototype.addEventListener = function(name, func, capture) {
+		if (!this.listeners)
+			this.listeners = new Object();
+		this.listeners[name] = func;
+		this.attachEvent('on'+name, func);
+	}
+
+	window.removeEventListener = Element.prototype.removeEventListener = function(name, func, capture) {
+		this.listeners[name] = null;
+		this.detachEvent('on'+name, func);
+	}
+}
+
+// INFO DOMTokenList for IE8/9 (needed for Element.classList etc)
 
 test(function() {
 	DOMTokenList;
@@ -38,9 +76,7 @@ test(function() {
 		}		
 		proto.add = function(token) {
 			var rx = new RegExp('(?:(?:^|\\s)\\s*'+token+'\\s*(?:$|\\s)|\\s*$)');
-			console.log(this.$node[this.$list]);
 			this.$node[this.$list] = this.$node[this.$list].replace(rx, ' '+token+' ');
-			console.log(this.$node[this.$list]);
 		}		
 		proto.remove = function(token) {
 			var rx = new RegExp('(?:^|\\s)\\s*'+token+'\\s*(?:$|\\s)');
@@ -52,24 +88,62 @@ test(function() {
 
 		this.init(arguments[0], arguments[1]);
 	}
-
-	Object.defineProperty(HTMLElement.prototype, 'classList', {'get':function() {
-		// NOTE This only works, because we don't return the value stored in 
-		//      this.classList but the resulting instance of the "new" call here
-		//      (the instance is stored in this.classList on the fly). Splitting
-		//      this line into two would cause an infinite loop, since we would
-		//      try to get the value stored in this.classList, which would call
-		//      the getter function from within the getter function.
-		return this.classList = new window.DOMTokenList(this, 'className');
-	}});
 });
+
+// INFO DOM nodes and elements
+
+try {
+	var elm = document.createElement('DIV');
+
+	if (!elm.nextElementSibling && (elm.nextSibling !== undefined)) {
+		Object.defineProperty(Element.prototype, 'nextElementSibling', {'get':function() {
+			var elm = this.nextSibling;
+			while (elm) {
+				if (elm.nodeType == 1)
+					return elm;
+				elm = elm.nextSibling;
+			}
+			return null;			
+		}});
+	}
+
+	test(function() {
+		elm.getElementsByClassName('Foobar');
+	}, function() {
+		document.getElementsByClassName = Element.prototype.getElementsByClassName = function(name) {
+			var result = new Array();
+			var classExp = new RegExp('(?:^|\\s)' + name + '(?:\\s|$)');
+			var nodes = this.getElementsByTagName('*');
+			for (var i = 0; i < nodes.length; i++)
+				if (classExp.test(nodes[i].className))
+					result.push(nodes[i]);
+			return result;
+		}
+	});
+
+	test(function() {
+		elm.classList.add('Test');
+	}, function() {
+		Object.defineProperty(Element.prototype, 'classList', {'get':function() {
+			// NOTE This only works, because we don't return the value stored in 
+			//      this.classList but the resulting instance of the "new" call here
+			//      (the instance is stored in this.classList on the fly). Splitting
+			//      this line into two would cause an infinite loop, since we would
+			//      try to get the value stored in this.classList, which would call
+			//      the getter function from within the getter function.
+			return this.classList = new window.DOMTokenList(this, 'className');
+		}});
+	});
+}
+catch (e) {
+	console.log('Smoothie normalize exception: Element unsupported: '+e);
+}
 
 // INFO CSSStyleSheet and related objects
 
 try {
 	var sheet = document.head.insertBefore(document.createElement('STYLE'), document.head.firstChild).sheet;
-	var cssPrefix = window.webkitRequestAnimationFrame?'-webkit-':'';
-	sheet.insertRule('@'+cssPrefix+'keyframes ViewportAnimation {}', 0);
+	sheet.insertRule('@'+(window.webkitRequestAnimationFrame?'-webkit-':'')+'keyframes ViewportAnimation {}', 0);
 	var animation = sheet.cssRules[0];
 
 	test(function() {
@@ -87,7 +161,7 @@ try {
 		if (e == 'Error: Invalid argument.') {
 			CSSKeyframesRule.prototype.$deleteRule = CSSKeyframesRule.prototype.deleteRule;
 			CSSKeyframesRule.prototype.deleteRule = function(key) {
-				var k = parseInt(key)/100;
+				var k = key=='from'?0:key=='to'?1:parseInt(key)/100;
 				this.$deleteRule(k);
 			}
 		}
@@ -96,7 +170,15 @@ try {
 	document.head.removeChild(document.head.firstChild);
 }
 catch (e) {
-	console.log(e);
+	console.log('Smoothie normalize exception: CSSStyleSheet unsupported: '+e);
+}
+
+
+document.onreadystatechange = function() {
+	if (!document.head)
+		document.head = document.getElementsByTagName('HEAD')[0];
+	if (!document.body)
+		document.body = document.getElementsByTagName('BODY')[0];
 }
 
 })();

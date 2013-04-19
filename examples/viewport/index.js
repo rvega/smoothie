@@ -36,17 +36,18 @@ function transite(viewport, mode, start) {
 		'start':start
 	}
 
-	viewport.views[0].parentNode.appendChild(viewport.views[0].cloneNode(true));
-	viewport.next(transition);
 
 	function reinit(evt) {
-		evt.lastView.parentNode.removeChild(evt.lastView);
+		viewport.last.parentNode.removeChild(viewport.last);
 		if (viewport.node == bodyViewport.node)
 			blockViewport.init(viewport.views[0].getElementsByClassName('Viewport')[0]);
 		addButtonEvents();
 		viewport.node.removeEventListener('viewchange', reinit, false);
 	}
+
+	viewport.views[0].parentNode.appendChild(viewport.views[0].cloneNode(true));
 	viewport.node.addEventListener('viewchange', reinit, false);
+	viewport.next(transition);
 }
 function transiteBodyLeft() { transite(bodyViewport, 'from-left', bodyTransform); }
 function transiteBodyRight() { transite(bodyViewport, 'from-right', bodyTransform); }
@@ -59,6 +60,7 @@ function transiteBlockBottom() { transite(blockViewport, 'from-bottom', blockTra
 
 exports.interactive = function() {
 	var viewports = document.getElementsByClassName('Viewport');
+	console.log(viewports);
 	bodyViewport = new vp.Viewport(viewports[0]);
 	blockViewport = new vp.Viewport(viewports[1]);
 	addButtonEvents();

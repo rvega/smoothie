@@ -28,7 +28,7 @@ var cache = new Object();
 // INFO Path parser
 var parser = document.createElement('A');
 
-function require(identifier, callback) {
+function require(identifier, callback, debug) {
 	var module = resolve(identifier);
 
 	if (cache[module.id]) {
@@ -43,11 +43,13 @@ function require(identifier, callback) {
 	var request = new XMLHttpRequest();
 	request.open('GET', module.uri, !!callback);
 	request.send();
-	cache[module.id] = null;	
-	request.onload = callback?onLoad:onLoad();
+	cache[module.id] = null;
+	callback?request.onreadystatechange=onLoad:onLoad();
 	return cache[module.id];
 	
 	function onLoad() {
+		if (request.readyState < 4)
+			return;
 		if (request.status != 200)
 			throw 'require() exception: GET '+module.uri+' '+request.status+' ('+request.statusText+')';
 		if (!cache[module.id]) { 

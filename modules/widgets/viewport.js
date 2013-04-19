@@ -149,6 +149,7 @@ function Viewport() {
 
 	proto.init = function(node) {
 		this.node = node;
+		console.log(node);
 		this.spreader = this.node.getElementsByClassName('Spreader')[0];
 		this.frame = this.node.getElementsByClassName('Frame')[0];
 		this.views = this.frame.children;
@@ -293,12 +294,11 @@ function Viewport() {
 		var self = this;
 
 		function cleanup() {
+			self.current.classList.remove('active');
+			self.last = self.current;
+			self.current = view;
 			var evt = document.createEvent('Event');
 			evt.initEvent('viewchange', true, true);
-			evt.lastView = self.current;
-			evt.currentView = view;
-			self.current.classList.remove('active');
-			self.current = view;
 			self.node.dispatchEvent(evt);
 		}
 
@@ -311,6 +311,7 @@ function Viewport() {
 
 	proto.next = function(transition) {
 		var view = this.current.nextElementSibling;
+		console.log('XX'+view);
 		if (!view)
 			view = this.frame.firstElementChild;
 		this.show(view, transition);
