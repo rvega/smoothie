@@ -33,11 +33,8 @@ if (!window.addEventListener && window.attachEvent) {
 			this.fireEvent('on'+evt.expando);
 		}
 		catch (e) {
-			if (this.listeners && this.listeners[evt.expando]) {
-				this.attachEvent('onclick', this.listeners[evt.expando]);
-				this.fireEvent('onclick');
-				this.detachEvent('onclick', this.listeners[evt.expando]);
-			}
+			if (this.listeners && this.listeners[evt.expando])
+				this.listeners[evt.expando](evt);
 		}
 	}
 
@@ -174,11 +171,13 @@ catch (e) {
 }
 
 
-document.onreadystatechange = function() {
-	if (!document.head)
-		document.head = document.getElementsByTagName('HEAD')[0];
-	if (!document.body)
-		document.body = document.getElementsByTagName('BODY')[0];
-}
+if (document.head === undefined)
+	Object.defineProperty(document, 'head', {'get':function() {
+		return this.getElementsByTagName('HEAD')[0];
+	}});
+if (document.body === undefined)
+	Object.defineProperty(document, 'body', {'get':function() {
+		return this.getElementsByTagName('BODY')[0];
+	}});
 
 })();

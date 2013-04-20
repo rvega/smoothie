@@ -149,7 +149,6 @@ function Viewport() {
 
 	proto.init = function(node) {
 		this.node = node;
-		console.log(node);
 		this.spreader = this.node.getElementsByClassName('Spreader')[0];
 		this.frame = this.node.getElementsByClassName('Frame')[0];
 		this.views = this.frame.children;
@@ -160,7 +159,7 @@ function Viewport() {
 	// NOTE Using an own styleSheet object keeps the global scope
 	//      clean and seems to fix a bug in Opera, which only
 	//      applies a CSSKeyframesRule if this is part of a
-	//      CSSStyleSheet, which has been created dynamically. 
+	//      CSSStyleSheet, which has been created dynamically.
 	proto.styleSheet = document.head.insertBefore(document.createElement('STYLE'), document.head.firstChild).sheet;
 	try {
 		proto.styleSheet.insertRule('@'+cssPrefix+'keyframes ViewportAnimation {}', 0);
@@ -311,7 +310,6 @@ function Viewport() {
 
 	proto.next = function(transition) {
 		var view = this.current.nextElementSibling;
-		console.log('XX'+view);
 		if (!view)
 			view = this.frame.firstElementChild;
 		this.show(view, transition);
