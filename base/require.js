@@ -61,10 +61,11 @@ function require(identifier, callback, debug) {
 
 function resolve(identifier) {
 	var m = identifier.match(/^(?:([^:\/]+):)?(\.\.?)?\/?((?:.*\/)?)([^\.]+)?(\..*)?$/);
-	parser.href = '/'+((m[2]?pwd[0]+m[2]+'/':'')+m[3])+(m[4]?m[4]:'index');
+	var p = pwd[0].match(/^(?:([^:\/]+):)?(.*)/);
+	parser.href = '/'+((m[2]?p[2]+m[2]+'/':'')+m[3])+(m[4]?m[4]:'index');
 	return {
 		'id': (parseInt(m[1])>0?m[1]+':':'')+parser.href.replace(/^[^:]*:\/\/[^\/]*\/|\/(?=\/)/g, ''),
-		'uri': paths[m[1]?parseInt(m[1]):0]+parser.href.replace(/^[^:]*:\/\/[^\/]*\//, '')+(m[5]?m[5]:'.js')
+		'uri': paths[p[1]?parseInt(p[1]):m[1]?parseInt(m[1]):0]+parser.href.replace(/^[^:]*:\/\/[^\/]*\//, '')+(m[5]?m[5]:'.js')
 	};
 }
 
