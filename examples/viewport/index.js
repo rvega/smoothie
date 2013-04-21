@@ -1,4 +1,5 @@
 'use strict';
+console.log('index module');
 
 var vp = require('1:widgets/viewport');
 
@@ -45,7 +46,7 @@ function transite(viewport, mode, start) {
 		viewport.node.removeEventListener('viewchange', reinit, false);
 	}
 
-	viewport.views[0].parentNode.appendChild(viewport.views[0].cloneNode(true));
+	viewport.views[0].parentNode.appendChild(viewport.views[0].cloneNode(false));
 	viewport.node.addEventListener('viewchange', reinit, false);
 	viewport.next(transition);
 }

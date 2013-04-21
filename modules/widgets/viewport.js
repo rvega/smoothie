@@ -15,6 +15,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 'use strict';
+console.log('viewport module');
+
+require('../fixes/w3cDomNodes');
+require('../fixes/w3cDomLists');
+require('../fixes/w3cElementTraversal');
+require('../fixes/w3cDomEvents');
+require('../fixes/w3cCssAnimations');
 
 // INFO CSS helper classes
 // TODO Get rid of these or move them into a separate module

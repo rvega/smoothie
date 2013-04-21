@@ -7,7 +7,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Smoothie Example for fixes/fontSmoothing module</title>
 
-	<link rel="stylesheet" href="../example.css" type="text/css" charset="utf-8">
+	<link rel="stylesheet" href="../../example.css" type="text/css" charset="utf-8">
 	<link rel="stylesheet" href="./calluna-regular-link.css" type="text/css" charset="utf-8">
 	<style type="text/css">
 		@import url('calluna-regular-imported.css');
@@ -35,12 +35,18 @@
 		}
 	</style>
 
-	<script type="text/javascript">var smoothie = {'requireRoot':{'smoothieModules':'../../modules/'}};</script>
-	<script type="text/javascript" src="../../base/require.js"></script>
+	<script type="text/javascript">var smoothie = {'requirePaths':['../../../modules/']};</script>
+	<script type="text/javascript" src="../../../base/require.js"></script>
 	<script type="text/javascript">
 		window.onload = function() {
-			require('smoothieModules:fixes/fontSmoothing').apply();
+			console.log(document.body.firstElementChild.classList.add);
+			console.log(document.body.firstElementChild.classList.add);
 		}
+		require('fixes/w3cDomNodes');
+		require('fixes/w3cDomLists');
+		require('fixes/w3cElementTraversal');
+		require('fixes/w3cDomEvents');
+		require('fixes/cssFontFaceRule');
 	</script>
 </head>
 
